@@ -24,29 +24,50 @@ class CommodiesController {
     String getSearchResultViaAjax(@RequestBody CommoditiesEntity InputSearch, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter) {
         println InputSearch.getcLink()
         def input = InputSearch.getcLink()
+        def jsonOutput = new JsonOutput()
         //搜索框传进来的数据可能是链接，也有可能是关键字，首先要进行判断是否为链接，链接则直接查询链接，不是链接的话就进行商品名称的模糊搜索
         def result =null
-        if(input.contains(".com")){
+        if(input.contains(".jd")||input.contains(".com")||input.contains(".html")){
             //判断链接是否已存在
             if(CommditiesEntityService.exists(input)){
                 def outputList = CommditiesEntityService.findCommoditiesEntityByCLink(input)
-                def jsonOutput = new JsonOutput()
                 result = jsonOutput.toJson(outputList)
-                println(result)
-                contentFormatter.content().'content' {
-                    'test' 'test123'
-                }
+                println("连接存在返回结果："+result)
             }else{
-
+                try {
+                    def ff = input//"https://item.jd.com/4613593.html"
+                    Process proc =Runtime.getRuntime().exec("D:/A_GIT_MANTI/Scraping-master1/Scraping-master/pp2.bat  "+ff);
+                    def jj=proc.waitFor(); //得到进程运行结束后的返回状态，如果进程未运行完毕则等待知道执行完毕
+                    println proc.exitValue() //输出进程返回状态 0 为成功， 1 为失败
+//                    Reader reader = new InputStreamReader(proc.getInputStream());
+//                    BufferedReader bf = new BufferedReader(reader);
+//                    String line = null;
+//                        while((line=bf.readLine())!=null) {
+//                            System.out.println(line);
+//                       }
+                    //成功则根据链接查找数据库，返回相应数据存到json 对象 ，返回给前端
+                    if(jj==0) {
+                        def outputList = CommditiesEntityService.findCommoditiesEntityByCLink(input)
+                        result = jsonOutput.toJson(outputList)
+                        println("hello "+result)
+                    }else{
+                        result = jsonOutput.toJson("{'result':'-1'}")
+                        println result
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    result = jsonOutput.toJson("{'result':'-2'}")
+                    System.out.println("执行命令：" + "notepad" + "错误");
+                }
             }
 
         }
 
-        contentFormatter.content().'content' {
-            'test' 'test123'
-        }
+//        contentFormatter.content().'content' {
+//            'test' 'test123'
+//        }
 
-        println 'jj'
+       // println 'jj'
 
         return result.toString()//contentFormatter.toString()
     }

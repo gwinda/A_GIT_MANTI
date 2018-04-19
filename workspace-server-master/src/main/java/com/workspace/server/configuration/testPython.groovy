@@ -8,8 +8,10 @@ import org.python.util.PythonInterpreter
 class testPython {
     public static void main(String[] args) {
         try {
-            Process proc =Runtime.getRuntime().exec("D:/OLLB2B_Migration/Scraping-master1/Scraping-master/pp2.bat  https://item.jd.com/4613591.html");
+            def ff = "https://item.jd.com/4613593.html"
+            Process proc =Runtime.getRuntime().exec("D:/A_GIT_MANTI/Scraping-master1/Scraping-master/pp2.bat  "+ff);
             def jj=proc.waitFor();
+
             println proc.exitValue()
             println proc.errorStream
         } catch (Exception e) {

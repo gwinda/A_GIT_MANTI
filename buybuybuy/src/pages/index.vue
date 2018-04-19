@@ -3,11 +3,11 @@
    <div class="top_SYSTEM">
     <div class = 'title_header'> 商品监测对比系统</div>
 
-     <div id="main" style="width: 600px;height: 400px;"></div>
+     <!--<div id="main" style="width: 600px;height: 400px;"></div>-->
 
      <el-container>
        <el-header>
-         <i>{{user_id}}</i>
+
          <el-menu style="width: auto"
                   :default-active="activeIndex2"
                   class="el-menu-demo"
@@ -38,7 +38,7 @@
          <el-aside width="200px">
            <el-row class="tac">
              <el-col>
-               <h1>个人信息</h1>
+               <h1>个人信息 <i>{{user_id}}</i></h1>
                <el-menu  default-active="2" background-color="#545c64" class="el-menu-vertical-demo" active-text-color="#ffd04b" text-color="#fff">
                  <!--default-active="2"-->
                  <!--class="el-menu-vertical-demo"-->
@@ -85,11 +85,19 @@
          <el-container>
            <el-main>
              <div class="sousuo">
-               <el-autocomplete placeholder="请输入内容" class="inputs" v-model="hello"></el-autocomplete>
+               <!--<el-autocomplete placeholder="请输入内容" class="inputs" v-model="hello"></el-autocomplete>-->
+               <el-input placeholder="请输入内容" class="inputs" v-model="inputLink"></el-input>
                <el-button  type="primary" round  @click="Goodsearch" >搜索</el-button><br/>
                <div style="height: 600px">
                  <el-row>
-                   <el-col :span="24"><div class="grid-content bg-purple-dark"></div></el-col>
+                   <el-col :span="24">
+                     <div class="grid-content bg-purple-dark">
+                       商品名称：{{hello}}<hr/>
+                       商品价格：{{goodPrice}}
+                       商品链接：<a  v-bind:href="[''+inputLink]">{{inputLink}}</a>
+                     </div>
+
+                   </el-col>
                  </el-row>
                  <el-row>
                    <el-col :span="24"><div class="grid-content bg-purple-dark"></div></el-col>
@@ -141,6 +149,8 @@
           activeIndex2: '1',
           user_id:'',
           username :'',
+          inputLink: '',
+          goodPrice:'',
           showmyselfNav: false,
 
           tableData: [{
@@ -202,11 +212,12 @@
           alert(this.hello)
           let that = this
           this.$axios.post('https://localhost:888/goodsLog/search', {
-            cLink: this.hello
+            cLink: this.inputLink
           })
             .then((response) => {
               console.log(response.data[0])
               this.hello = response.data[0].cName
+              this.goodPrice = response.data[0].cLowestPrice
             })
         },
         handleSelect(key, keyPath) {
@@ -266,13 +277,11 @@
     background-image: url("../assets/bg.jpg");
     padding: 0px;
     margin: -8px;
-    position:fixed;
-    width:100%;
-    height:100%;
+    position: absolute;
+    width:100%;;
     min-width: 1000px;
     z-index:-10;
     zoom: 1;
-    background-color: #fff;
     background-repeat: no-repeat;
     background-size: cover;
     -webkit-background-size: cover;

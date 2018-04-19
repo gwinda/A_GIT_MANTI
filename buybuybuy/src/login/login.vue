@@ -199,7 +199,8 @@
       login(){
         let that = this;
         var filter=/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/
-        if(this.username =="" || this.password == ""){
+        if(this.username ==="" || this.password === ""){
+
           alert("请输入邮箱或密码")
         }else if(!filter.test(this.username)){
           this.word = "邮箱格式错误，请重试"
@@ -211,21 +212,21 @@
           this.showTishi = true
           this.password = ''
         }else {
-          this.$axios.post('https://localhost:888/api/loginCheck', {
+          this.$axios.post('https:localhost:888/api/loginCheck', {
             uNumber: this.username,
             uPassWord: this.password
           }).then((res) => {
             console.log(res.data)
             //this.word = res.data.content.outputMess
             /*接口的传值是(-1,该用户不存在),(0,密码错误)，同时还会检测管理员账号的值*/
-            if(res.data.content.outputMess == '-1'){
+            if(res.data.content.outputMess === '-1'){
               //alert('该用户不存在')
               this.word = "该用户不存在"
               this.showTishi = true
-            }else if(res.data.content.outputMess == '0'){
+            }else if(res.data.content.outputMess === '0'){
               this.word = "密码输入错误"
               this.showTishi = true
-            }else if(res.data.content.outputMess == '-2'){
+            }else if(res.data.content.outputMess === '-2'){
               this.word = "登录失败，请检查网络连接或重试"
             }else{
                 this.word = "密码正确"
