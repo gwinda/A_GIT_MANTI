@@ -1,9 +1,16 @@
 package com.workspace.server.controller
 
 import com.workspace.server.dao.CommoditiesEntityDao
+import com.workspace.server.dao.CommoditiesLogEntityDao
+import com.workspace.server.dao.UserCommoditiesLogEntityDao
 import com.workspace.server.interceptor.ContentFormatInterceptor
 import com.workspace.server.model.CommoditiesEntity
+import com.workspace.server.model.CommoditiesLogEntity
+import com.workspace.server.model.UsercommoditylogEntity
+import com.workspace.server.model.UsersEntity
 import com.workspace.server.service.CommditiesEntityService
+import com.workspace.server.service.CommditiesLogEntityService
+import com.workspace.server.service.UserCommditiesEntityService
 import com.workspace.server.util.ContentFormatter
 import groovy.json.JsonOutput
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,6 +25,9 @@ class CommodiesController {
 
     @Autowired CommoditiesEntityDao useCommoditiesEntityDaorDao
     @Autowired CommditiesEntityService CommditiesEntityService
+//    @Autowired CommoditiesLogEntityDao commDao
+//     @Autowired CommditiesLogEntityService commService
+
 
     @ResponseBody
     @RequestMapping("/goodsLog/search") //前端搜索功能Service ，返回json list ,在前端显示所有搜索数据(数据量多会分页)
@@ -44,10 +54,21 @@ class CommodiesController {
 //                    String line = null;
 //                        while((line=bf.readLine())!=null) {
 //                            System.out.println(line);
-//                       }
-                    //成功则根据链接查找数据库，返回相应数据存到json 对象 ，返回给前端
+//                       } not used
+                    //成功则根据链接查找数据库，并将数据存到商品实时记录表 ,返回相应数据存到json 对象 ，返回给前端
                     if(jj==0) {
                         def outputList = CommditiesEntityService.findCommoditiesEntityByCLink(input)
+                        //实例化对象
+                        CommoditiesLogEntity log =  new CommoditiesLogEntity()
+                        log.setCid(outputList[0].getCid())
+                        log.setClCount(Integer.parseInt(outputList[0].getcCount()))
+                        log.setClPrice(outputList[0].getcLowestPrice())
+                        log.setClName(outputList[0].getcName())
+                        //将数据存在数据库（商品实时记录表），并返回结果， 0 表示 成功 ， 1 表示 失败
+                        def insertLogResult = commDao.save(log)
+                        if(insertLogResult == 0){
+                            println "success"
+                        }
                         result = jsonOutput.toJson(outputList)
                         println("hello "+result)
                     }else{
@@ -62,14 +83,9 @@ class CommodiesController {
             }
 
         }
-
-//        contentFormatter.content().'content' {
-//            'test' 'test123'
-//        }
-
-       // println 'jj'
-
         return result.toString()//contentFormatter.toString()
     }
+
+
 
 }

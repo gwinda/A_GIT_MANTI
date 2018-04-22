@@ -92,9 +92,11 @@
                  <el-row>
                    <el-col :span="24">
                      <div class="grid-content bg-purple-dark">
+                      我是{{CId}}
                        商品名称：{{hello}}<hr/>
                        商品价格：{{goodPrice}}
                        商品链接：<a  v-bind:href="[''+inputLink]">{{inputLink}}</a>
+                       <el-button type="primary" round   @click="UsersGoodsInsert(CId)" >我是按钮</el-button>
                      </div>
 
                    </el-col>
@@ -152,6 +154,7 @@
           inputLink: '',
           goodPrice:'',
           showmyselfNav: false,
+          CId :'',
 
           tableData: [{
             date: '2016-05-02',
@@ -196,7 +199,7 @@
         })
       },
       methods: {
-        testClick() {
+        testClick() { //测试方法暂时无用
           let that = this
           this.$axios.post('https://localhost:444/goodsLog/search', {
             uname: this.MESS,
@@ -208,7 +211,7 @@
               this.pass = response.data.content.nasme
             })
         },
-        Goodsearch(){
+        Goodsearch(){ //根据商品链接搜索商品数据
           alert(this.hello)
           let that = this
           this.$axios.post('https://localhost:888/goodsLog/search', {
@@ -218,13 +221,31 @@
               console.log(response.data[0])
               this.hello = response.data[0].cName
               this.goodPrice = response.data[0].cLowestPrice
+              this.CId =  response.data[0].cid
+
             })
         },
         handleSelect(key, keyPath) {
           console.log(key, keyPath);
         },
-        regAndLogin(){
+        regAndLogin(){ //跳转到登陆注册界面
           this.$router.push('/login');
+        },
+        UsersGoodsInsert(value2){ // 用户添加想要订阅的商品
+          let that = this
+          alert("Hello" + value2 +this.user_id)
+          this.$axios.post('https://localhost:888/api/InsertSelfGoods', {
+            uId: this.user_id,
+            cId: value2
+          })
+            .then((response) => {
+              alert("" + response.data)
+              console.log(response.data.content)
+             // this.hello = response.data.content.test
+              // this.MESS = response.data.content.passsss
+              // this.pass = response.data.content.nasme
+            })
+
         },
         drawPie(id){
           this.charts = echarts.init(document.getElementById(id))

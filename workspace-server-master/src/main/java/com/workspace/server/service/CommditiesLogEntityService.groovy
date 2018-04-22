@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional
  */
 @Service
 @Transactional
-class CommditiesLogEntityService {
+class CommditiesLogEntityService {  //商品实时数据记录（定时查询）
 
     @Autowired CommoditiesLogEntityDao CommLodEntityDao
 

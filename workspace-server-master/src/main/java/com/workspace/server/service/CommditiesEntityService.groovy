@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional
  */
 @Service
 @Transactional
-class CommditiesEntityService {
+class CommditiesEntityService { //商品记录
 
     @Autowired CommoditiesEntityDao CommEntityDao
 
