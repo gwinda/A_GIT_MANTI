@@ -43,7 +43,7 @@ public class UsersController {
         def  emailsignup =  inputParamer.getuNumber()
         def  passwordsignup = inputParamer.getuPassWord()
             try {
-                if (usersService.exists(usernamesignup)) {
+                if (usersService.exists(emailsignup)) {
                     contentFormatter.content().'content' {
                         'outputMess' '-1'
                     }

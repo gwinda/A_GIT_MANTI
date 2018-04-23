@@ -20,6 +20,7 @@ class UsersCommodiesController {
 
      @Autowired UserCommoditiesLogEntityDao commDao
      @Autowired UserCommditiesEntityService commService
+     @Autowired CommditiesEntityService  goodsService
 
     @ResponseBody
     @RequestMapping("/api/InsertSelfGoods") //已经登陆的用户进行订阅新的商品
@@ -29,46 +30,52 @@ class UsersCommodiesController {
         def jsonOutput = new JsonOutput()
         //搜索框传进来的数据可能是链接，也有可能是关键字，首先要进行判断是否为链接，链接则直接查询链接，不是链接的话就进行商品名称的模糊搜索
         def result =null
-       if(input!= 0 &&input!= ''){
-           //查找所有该用户已经订阅的商品，看是否已存在该商品，
-           // 若存在，则不再插入数据库，返回已订阅标识，否则执行插入操作
-           def usersGoodsByUID= commService.findUsercommoditylogEntityByuId(input)
-           def existCID = false
-           usersGoodsByUID.each{current ->
-               if(current.getcId()==InputSearch.getcId()){
-                   existCID = true
-               }
-           }
-           if(!existCID ){
-               UsercommoditylogEntity usercommodity  = new UsercommoditylogEntity()
-               usercommodity.setcId(InputSearch.getcId())
-               usercommodity.setuId(InputSearch.getuId())
-               usercommodity.setInFocus(0)
-               def insertResult = commDao.save(usercommodity)
-               if(insertResult == 0){
-                   contentFormatter.content().'content' {
-                       'outputMess' '新增成功'
-                   }
+        try{
+            if(input!= 0 &&input!= ''){
+                //查找所有该用户已经订阅的商品，看是否已存在该商品，
+                // 若存在，则不再插入数据库，返回已订阅标识，否则执行插入操作
+                println InputSearch.getcId()
+                println InputSearch.getuId()
+                def usersGoodsByUID= commService.findUsercommoditylogEntityByuId(input)
+                def existCID = false
+                usersGoodsByUID.each{current ->
+                    if(current.getcId()==InputSearch.getcId()){
+                        existCID = true
+                    }
+                }
+                if(!existCID ){
+                    UsercommoditylogEntity usercommodity  = new UsercommoditylogEntity()
+                    usercommodity.setcId(InputSearch.getcId())
+                    usercommodity.setuId(InputSearch.getuId())
+                    usercommodity.setInFocus(0)
+                    def insertResult = commDao.save(usercommodity)
+                    if(insertResult == 1){
+                        contentFormatter.content().'content' {
+                            'outputMess' '新增成功'
+                        }
 
-               }else{
-                   contentFormatter.content().'content' {
-                       'outputMess' '新增失败，请检查网络'
-                   }
+                    }else{
+                        contentFormatter.content().'content' {
+                            'outputMess' '新增失败，请检查网络'
+                        }
 
-               }
-           }else{
-               contentFormatter.content().'content' {
-                   'outputMess' '已存在该商品，请到个人库中查找'
-               }
+                    }
+                }else{
+                    contentFormatter.content().'content' {
+                        'outputMess' '已存在该商品，请到个人库中查找'
+                    }
 
-           }
-       }else{
-           contentFormatter.content().'content' {
-               'outputMess' '\'用户未登录，请登录再进行订阅'
-           }
+                }
+            }else{
+                contentFormatter.content().'content' {
+                    'outputMess' '用户未登录，请登录再进行订阅'
+                }
 
 
-       }
+            }
+        }catch(Exception e){
+            e.printStackTrace()
+        }
         return contentFormatter.toString()
     }
 
@@ -81,13 +88,25 @@ class UsersCommodiesController {
         def jsonOutput = new JsonOutput()
         //搜索框传进来的数据可能是链接，也有可能是关键字，首先要进行判断是否为链接，链接则直接查询链接，不是链接的话就进行商品名称的模糊搜索
         def result =null
+        List<CommoditiesEntity> List = new ArrayList<CommoditiesEntity>()
         if(input!= ''){
-            //查找所有该用户已经订阅的商品
+            //查找所有该用户已经订阅的商品 ,并查询到商品的具体信息（CommoditiesEntity）
             def usersGoodsByUID= commService.findUsercommoditylogEntityByuId(input)
-            result = jsonOutput.toJson(usersGoodsByUID)
-        }else{
-            result = jsonOutput.toJson("{'result':'用户未登录，请登录再进行订阅'}")
-            println("连接存在返回结果："+result)
+            if(usersGoodsByUID){
+                usersGoodsByUID?.each{current_Goods->
+                    CommoditiesEntity out = goodsService.findCommoditiesEntityBycid(current_Goods.getcId())
+                    if(out != null) {
+                        List.add(out)
+                    }
+                }
+            }
+            result = jsonOutput.toJson(List)
+        }else{ //UID 为空，则用户未登录 ,将提示信息存在result,返回json
+            contentFormatter.content().'content' {
+                'outputMess' '用户未登录，请登录再进行订阅'
+            }
+            result = contentFormatter//jsonOutput.toJson("{'result':'用户未登录，请登录再进行订阅'}")
+            println("连接返回结果："+result)
 
         }
 

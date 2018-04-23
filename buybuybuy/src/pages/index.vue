@@ -31,11 +31,23 @@
            </el-submenu>
            <el-menu-item index="3" disabled>消息中心</el-menu-item>
            <el-menu-item index="4" disabled>订单管理</el-menu-item>
-           <el-menu-item index="6" style="float: right"  @click="regAndLogin"> 登录注册 </el-menu-item>
+           <div v-if="user_id">
+             <el-submenu index="6"  style="float: right">
+               <template slot="title">您好,{{username}}</template>
+               <el-menu-item index="6-1"   @click="seemyself">个人信息</el-menu-item>
+               <el-tooltip content="点击我注销" placement="top">
+                  <el-menu-item index="6-2" :plain="true"  @click="signOut">注销</el-menu-item>
+               </el-tooltip>
+               <el-menu-item index="6-3"   @click="regAndLogin">切换账号</el-menu-item>
+             </el-submenu>
+           </div>
+           <div v-else>
+             <el-menu-item index="6" style="float: right"  @click="regAndLogin"> 登录注册 </el-menu-item>
+           </div>
          </el-menu>
        </el-header>
        <el-container>
-         <el-aside width="200px">
+         <el-aside width="200px" v-show="myselfSee">
            <el-row class="tac">
              <el-col>
                <h1>个人信息 <i>{{user_id}}</i></h1>
@@ -60,7 +72,7 @@
                  </el-submenu>
                  <el-menu-item index="2">
                    <i class="el-icon-view"></i>
-                   <span slot="title">已订阅商品查看</span>
+                   <span slot="title" @click = 'seemyGoods'>已订阅商品查看</span>
                  </el-menu-item>
                  <el-menu-item index="3">
                    <i class="el-icon-edit-outline"></i>
@@ -74,7 +86,7 @@
                    <i class="el-icon-document"></i>
                    <span slot="title">已订阅商品管理</span>
                  </el-menu-item>
-                 <el-menu-item index="4">
+                 <el-menu-item index="5">
                    <i class="el-icon-message"></i>
                    <span slot="title">信息反馈</span>
                  </el-menu-item>
@@ -92,13 +104,23 @@
                  <el-row>
                    <el-col :span="24">
                      <div class="grid-content bg-purple-dark">
-                      我是{{CId}}
-                       商品名称：{{hello}}<hr/>
-                       商品价格：{{goodPrice}}
-                       商品链接：<a  v-bind:href="[''+inputLink]">{{inputLink}}</a>
-                       <el-button type="primary" round   @click="UsersGoodsInsert(CId)" >我是按钮</el-button>
+                       <div v-show="existgood">
+                         <el-container style=" height:200px ; width:100%;">
+                           <el-aside width="160px" style="height:200px ;background-color: #B3C0D1;line-height: 16px;">
+                             <img  v-bind:src="[imgSrc]" style="margin:0px; padding:0px;height: 197px; width:160px;"/>
+                           </el-aside>
+                           <el-main style="height:200px ;width:100%;;background-color: grey;">
+                             <div class = "goodsList_Layout">
+                               <el-row > 商品名称：{{hello}}</el-row>
+                               <el-row > 商品价格：{{goodPrice}}</el-row>
+                               <el-row > 商品链接：<a  v-bind:href="[''+inputLink]">{{inputLink}}</a></el-row>
+                               <el-button type="primary" round   @click="UsersGoodsInsert(CId)" >订阅该商品</el-button>
+                             </div>
+                           </el-main>
+                         </el-container>
+                         <label>商品ID：{{CId}}</label>
+                       </div>
                      </div>
-
                    </el-col>
                  </el-row>
                  <el-row>
@@ -154,7 +176,10 @@
           inputLink: '',
           goodPrice:'',
           showmyselfNav: false,
+          imgSrc :'',
           CId :'',
+          existgood:false,
+          myselfSee: false,
 
           tableData: [{
             date: '2016-05-02',
@@ -222,6 +247,8 @@
               this.hello = response.data[0].cName
               this.goodPrice = response.data[0].cLowestPrice
               this.CId =  response.data[0].cid
+              this.imgSrc = response.data[0].cPicture
+              this.existgood = true
 
             })
         },
@@ -232,6 +259,7 @@
           this.$router.push('/login');
         },
         UsersGoodsInsert(value2){ // 用户添加想要订阅的商品
+          if(this.user_id != ''){
           let that = this
           alert("Hello" + value2 +this.user_id)
           this.$axios.post('https://localhost:888/api/InsertSelfGoods', {
@@ -245,7 +273,47 @@
               // this.MESS = response.data.content.passsss
               // this.pass = response.data.content.nasme
             })
+          }else{
+            alert("用户未登录，请登录后再金逆行订阅")
+          }
+        },
+        seemyself(){
+          this.myselfSee = true
+        },
+        signOut(){
+          this.myselfSee = false
+          this.user_id= ''
+          this.username = ''
+          this.$message({
+            showClose: true,
+            message: '账号已成功注销'
+          });
+          this.$router.push('/')
+        },
+        open() {
 
+          const h = this.$createElement;
+          this.$notify({
+            title: '标题名称',
+            message: h('i', { style: 'color: teal'}, '这是提示文案这是提示文案这是提示文案这是提示文案这是提示文案这是提示文案这是提示文案这是提示文案')
+          });
+        },
+        seemyGoods(){
+          if(this.user_id != ''){
+            let that = this
+            this.$axios.post('https://localhost:888/api/SearchSelfGoods', {
+              uId: this.user_id,
+            })
+              .then((response) => {
+                alert("" + response.data)
+                console.log(response.data)
+                // this.hello = response.data.content.test
+                // this.MESS = response.data.content.passsss
+                // this.pass = response.data.content.nasme
+              })
+          }else{
+            alert("用户未登录，请登录后再金逆行订阅")
+          }
         },
         drawPie(id){
           this.charts = echarts.init(document.getElementById(id))
@@ -409,5 +477,11 @@
   .row-bg {
     padding: 10px 0;
     background-color: white;
+  }
+
+  .goodsList_Layout{
+    font-size: smaller;
+    text-align: left;
+    line-height: 14px
   }
 </style>

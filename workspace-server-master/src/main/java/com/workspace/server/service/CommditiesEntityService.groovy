@@ -18,7 +18,7 @@ class CommditiesEntityService { //商品记录
     List<CommoditiesEntity> findCommoditiesEntityByCLink (String CLink) {
         return CommEntityDao.findCommoditiesEntityByCLink(CLink)
     }
-    CommoditiesEntity findUsersEntityBycid(int cid) {
+    CommoditiesEntity findCommoditiesEntityBycid(int cid) {
         return CommEntityDao.findCommoditiesEntityBycid(cid)
     }
 

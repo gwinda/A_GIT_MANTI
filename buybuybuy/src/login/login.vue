@@ -244,16 +244,19 @@
         this.showRegister = true;
         this.showLogin = false;
         this.returnwrap = false;
+        this.word = ""
       },
       ToLogin(){
         this.showRegister = false;
         this.showLogin = true;
         this.returnwrap = false;
+        this.word = ""
       },
       TofindPass(){
         this.showRegister = false;
         this.showLogin = false;
         this.returnwrap = true;
+        this.word = ""
       },
       register(){
         var filter=/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/
