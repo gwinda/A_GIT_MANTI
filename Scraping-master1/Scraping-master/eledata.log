@@ -718,3 +718,67 @@ Sun, 15 Apr 2018 15:53:10 jd_monitoring_engine.py get_basic_info()[line:288] INF
 Sun, 15 Apr 2018 15:53:11 jd_monitoring_engine.py get_basic_info()[line:189] INFO Execution: JD Monitoring
 Sun, 15 Apr 2018 15:53:12 jd_monitoring_engine.py get_basic_info()[line:199] INFO Detected 30 products
 Sun, 15 Apr 2018 15:53:21 jd_monitoring_engine.py get_basic_info()[line:288] INFO Returned 30 products
+Mon, 23 Apr 2018 22:06:39 jd_monitoring_engine.py set_searching_url()[line:105] INFO Setting searching urls for JD Monitoring Engine...
+Mon, 23 Apr 2018 22:06:39 jd_monitoring_engine.py set_searching_url()[line:144] INFO Updated JD Monitoring Engine with 1 urls
+Mon, 23 Apr 2018 22:06:39 jd_monitoring_engine.py <module>()[line:437] INFO Sending 1/1 url dict to basic info extraction
+Mon, 23 Apr 2018 22:06:39 jd_monitoring_engine.py get_basic_info()[line:189] INFO Execution: JD Monitoring
+Mon, 23 Apr 2018 22:06:40 jd_monitoring_engine.py get_basic_info()[line:199] INFO Detected 30 products
+Mon, 23 Apr 2018 22:06:48 jd_monitoring_engine.py get_basic_info()[line:288] INFO Returned 30 products
+Mon, 23 Apr 2018 22:06:50 jd_monitoring_engine.py get_basic_info()[line:189] INFO Execution: JD Monitoring
+Mon, 23 Apr 2018 22:06:50 jd_monitoring_engine.py get_basic_info()[line:199] INFO Detected 30 products
+Mon, 23 Apr 2018 22:06:59 jd_monitoring_engine.py get_basic_info()[line:288] INFO Returned 30 products
+Mon, 23 Apr 2018 22:09:06 jd_monitoring_engine.py set_searching_url()[line:105] INFO Setting searching urls for JD Monitoring Engine...
+Mon, 23 Apr 2018 22:09:06 jd_monitoring_engine.py set_searching_url()[line:144] INFO Updated JD Monitoring Engine with 1 urls
+Mon, 23 Apr 2018 22:09:06 jd_monitoring_engine.py <module>()[line:437] INFO Sending 1/1 url dict to basic info extraction
+Mon, 23 Apr 2018 22:09:06 jd_monitoring_engine.py get_basic_info()[line:189] INFO Execution: JD Monitoring
+Mon, 23 Apr 2018 22:09:07 jd_monitoring_engine.py get_basic_info()[line:199] INFO Detected 30 products
+Mon, 23 Apr 2018 22:09:09 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(12653777571) is missed
+Mon, 23 Apr 2018 22:09:12 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(13374997105) is missed
+Mon, 23 Apr 2018 22:09:12 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(26785863219) is missed
+Mon, 23 Apr 2018 22:09:12 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(13436748779) is missed
+Mon, 23 Apr 2018 22:09:12 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(26793220616) is missed
+Mon, 23 Apr 2018 22:09:13 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(26483516138) is missed
+Mon, 23 Apr 2018 22:09:13 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(25717692800) is missed
+Mon, 23 Apr 2018 22:09:13 jd_monitoring_engine.py get_basic_info()[line:288] INFO Returned 23 products
+Mon, 23 Apr 2018 22:09:14 jd_monitoring_engine.py get_basic_info()[line:189] INFO Execution: JD Monitoring
+Mon, 23 Apr 2018 22:09:15 jd_monitoring_engine.py get_basic_info()[line:199] INFO Detected 30 products
+Mon, 23 Apr 2018 22:09:15 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(26793220616) is missed
+Mon, 23 Apr 2018 22:09:15 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(26483516138) is missed
+Mon, 23 Apr 2018 22:09:15 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(25717692800) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(10381563009) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(15609582188) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(10702370679) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(20813568314) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(15391982062) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(14672980029) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(25927779117) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(24953490991) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(23753728381) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(25985677518) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(26168156234) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(13824485439) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(26012212198) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(23582066393) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(10137091063) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(24615148148) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(13197270214) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:287] WARNING item: pid(25718069161) is missed
+Mon, 23 Apr 2018 22:09:16 jd_monitoring_engine.py get_basic_info()[line:288] INFO Returned 9 products
+Mon, 23 Apr 2018 22:10:24 jd_monitoring_engine.py set_searching_url()[line:105] INFO Setting searching urls for JD Monitoring Engine...
+Mon, 23 Apr 2018 22:10:24 jd_monitoring_engine.py set_searching_url()[line:144] INFO Updated JD Monitoring Engine with 1 urls
+Mon, 23 Apr 2018 22:10:24 jd_monitoring_engine.py <module>()[line:437] INFO Sending 1/1 url dict to basic info extraction
+Mon, 23 Apr 2018 22:10:24 jd_monitoring_engine.py get_basic_info()[line:189] INFO Execution: JD Monitoring
+Mon, 23 Apr 2018 22:10:25 jd_monitoring_engine.py get_basic_info()[line:199] INFO Detected 30 products
+Mon, 23 Apr 2018 22:10:33 jd_monitoring_engine.py get_basic_info()[line:288] INFO Returned 30 products
+Mon, 23 Apr 2018 22:10:34 jd_monitoring_engine.py get_basic_info()[line:189] INFO Execution: JD Monitoring
+Mon, 23 Apr 2018 22:10:35 jd_monitoring_engine.py get_basic_info()[line:199] INFO Detected 30 products
+Mon, 23 Apr 2018 22:10:43 jd_monitoring_engine.py get_basic_info()[line:288] INFO Returned 30 products
+Mon, 23 Apr 2018 22:13:55 jd_monitoring_engine.py set_searching_url()[line:105] INFO Setting searching urls for JD Monitoring Engine...
+Mon, 23 Apr 2018 22:13:56 jd_monitoring_engine.py set_searching_url()[line:144] INFO Updated JD Monitoring Engine with 1 urls
+Mon, 23 Apr 2018 22:13:56 jd_monitoring_engine.py <module>()[line:437] INFO Sending 1/1 url dict to basic info extraction
+Mon, 23 Apr 2018 22:13:56 jd_monitoring_engine.py get_basic_info()[line:189] INFO Execution: JD Monitoring
+Mon, 23 Apr 2018 22:13:56 jd_monitoring_engine.py get_basic_info()[line:199] INFO Detected 30 products
+Mon, 23 Apr 2018 22:14:09 jd_monitoring_engine.py get_basic_info()[line:288] INFO Returned 30 products
+Mon, 23 Apr 2018 22:14:10 jd_monitoring_engine.py get_basic_info()[line:189] INFO Execution: JD Monitoring
+Mon, 23 Apr 2018 22:14:11 jd_monitoring_engine.py get_basic_info()[line:199] INFO Detected 30 products
+Mon, 23 Apr 2018 22:14:19 jd_monitoring_engine.py get_basic_info()[line:288] INFO Returned 30 products

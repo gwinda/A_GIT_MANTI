@@ -361,9 +361,11 @@ class JDMonitoringEngine():
             item_url = item["item_url"].encode('utf-8')   
             images = item["images"]
             cursor = self.conndb()
-            sql = "INSERT INTO `commodities`( `CName`, `CLink`,`CLowestPrice`,`CCount`,`clowest_price`,`CPicture`) values( %s,%s,%s,%s ,%s,%s);"
+            #sql = "INSERT INTO `commodities`( `CName`, `CLink`,`CLowestPrice`,`CCount`,`clowest_price`,`CPicture`) values( %s,%s,%s,%s ,%s,%s);"
+            #cursor.execute(sql,(name,item_url,default_price,comments_ave_score,default_price,images))
+            sql = "INSERT INTO `commodities_log`( `CName`, `CLink`,`CLowestPrice`,`CCount`,`clowest_price`,`CPicture`) values( %s,%s,%s,%s ,%s,%s);"
             cursor.execute(sql,(name,item_url,default_price,comments_ave_score,default_price,images))
-			#.format(name,seller_name,default_price))  
+            #.format(name,seller_name,default_price))  
             self.db.commit()  
 
             

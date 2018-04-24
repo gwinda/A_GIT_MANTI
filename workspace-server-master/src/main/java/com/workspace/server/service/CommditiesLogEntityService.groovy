@@ -20,7 +20,7 @@ class CommditiesLogEntityService {  //商品实时数据记录（定时查询）
     List<CommoditiesLogEntity> findCommoditiesLogEntityBycid (int cid) {
         return CommLodEntityDao.findCommoditiesLogEntityBycid(cid)
     }
-    CommoditiesLogEntity findUsersEntityLogByclId(int clId) {
+    CommoditiesLogEntity findCommoditiesLogEntityByclId(int clId) {
         return CommLodEntityDao.findCommoditiesLogEntityByclId(clId)
     }
 

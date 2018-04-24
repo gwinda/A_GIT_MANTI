@@ -109,7 +109,7 @@
                            <el-aside width="160px" style="height:200px ;background-color: #B3C0D1;line-height: 16px;">
                              <img  v-bind:src="[imgSrc]" style="margin:0px; padding:0px;height: 197px; width:160px;"/>
                            </el-aside>
-                           <el-main style="height:200px ;width:100%;;background-color: grey;">
+                           <el-main style="height:200px ;width:100%;;background-color: white;">
                              <div class = "goodsList_Layout">
                                <el-row > 商品名称：{{hello}}</el-row>
                                <el-row > 商品价格：{{goodPrice}}</el-row>
@@ -118,14 +118,36 @@
                              </div>
                            </el-main>
                          </el-container>
-                         <label>商品ID：{{CId}}</label>
+                       </div>
+                       <div v-show="selfGoodsLook">
+                         <div v-for ="arr in objproject ">
+                           <el-container style=" height:200px ; width:100%;">
+                             <el-aside width="160px" style="height:200px ;background-color: #B3C0D1;line-height: 16px;">
+                               <img  v-bind:src="[arr.cPicture]" style="margin:0px; padding:0px;height: 197px; width:160px;"/>
+                             </el-aside>
+                             <el-main style="height:200px ;width:100%;;background-color: white;">
+                               <div class = "goodsList_Layout">
+                                 <el-row > 商品名称：{{arr.cName}}</el-row>
+                                 <el-row > 商品价格：{{arr.cLowestPrice}}</el-row>
+                                 <el-row > <a  v-bind:href="[''+arr.cLink]" target="_blank">进入详情页</a> <el-button type="primary" round  style="float: right" @click="FindOneGoodLog(arr.cid)" >查看该商品记录</el-button></el-row>
+
+                               </div>
+                             </el-main>
+                           </el-container>
+                           <h4></h4>
+                         </div>
+                         <el-pagination
+                           small
+                           layout="prev, pager, next"
+                           :total="50">
+                         </el-pagination>
                        </div>
                      </div>
                    </el-col>
                  </el-row>
                  <el-row>
-                   <el-col :span="24"><div class="grid-content bg-purple-dark"></div></el-col>
-                 </el-row>
+                 <el-col :span="24"></el-col>
+               </el-row>
                </div>
                <div class ='search-out-page'>
                  <!--<el-table-->
@@ -180,6 +202,8 @@
           CId :'',
           existgood:false,
           myselfSee: false,
+          selfGoodsLook:false,
+          objproject:null,
 
           tableData: [{
             date: '2016-05-02',
@@ -193,10 +217,6 @@
             date: '2016-05-01',
             name: '王小虎',
             address: '上海市普陀区金沙江路 1519 弄'
-          }, {
-            date: '2016-05-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
           }],
 
           charts: '',
@@ -237,7 +257,6 @@
             })
         },
         Goodsearch(){ //根据商品链接搜索商品数据
-          alert(this.hello)
           let that = this
           this.$axios.post('https://localhost:888/goodsLog/search', {
             cLink: this.inputLink
@@ -259,9 +278,8 @@
           this.$router.push('/login');
         },
         UsersGoodsInsert(value2){ // 用户添加想要订阅的商品
-          if(this.user_id != ''){
+          if(this.user_id){
           let that = this
-          alert("Hello" + value2 +this.user_id)
           this.$axios.post('https://localhost:888/api/InsertSelfGoods', {
             uId: this.user_id,
             cId: value2
@@ -274,13 +292,18 @@
               // this.pass = response.data.content.nasme
             })
           }else{
-            alert("用户未登录，请登录后再金逆行订阅")
+            this.$message({
+              showClose: true,
+              message: '用户未登录，请登录后再进行订阅',
+              type: 'error'
+            });
+           // alert("用户未登录，请登录后再进行订阅")
           }
         },
-        seemyself(){
+        seemyself(){ //已登录用户查看个人信息
           this.myselfSee = true
         },
-        signOut(){
+        signOut(){ //注销登录
           this.myselfSee = false
           this.user_id= ''
           this.username = ''
@@ -290,7 +313,7 @@
           });
           this.$router.push('/')
         },
-        open() {
+        open() { //消息通知的一种方式，暂时无用
 
           const h = this.$createElement;
           this.$notify({
@@ -298,24 +321,56 @@
             message: h('i', { style: 'color: teal'}, '这是提示文案这是提示文案这是提示文案这是提示文案这是提示文案这是提示文案这是提示文案这是提示文案')
           });
         },
-        seemyGoods(){
-          if(this.user_id != ''){
+        seemyGoods(){ //查看已登录用户的所有商品
+          if(this.user_id){
             let that = this
             this.$axios.post('https://localhost:888/api/SearchSelfGoods', {
               uId: this.user_id,
             })
               .then((response) => {
+                this.existgood = false
+                this.selfGoodsLook = true
                 alert("" + response.data)
                 console.log(response.data)
+                this.objproject = response.data
                 // this.hello = response.data.content.test
                 // this.MESS = response.data.content.passsss
                 // this.pass = response.data.content.nasme
               })
           }else{
-            alert("用户未登录，请登录后再金逆行订阅")
+            this.$message({
+              showClose: true,
+              message: '用户未登录，请登录后再进行订阅',
+              type: 'error'
+            });
           }
         },
-        drawPie(id){
+        FindOneGoodLog(value3){
+          alert(value3)
+          if(this.user_id){
+            let that = this
+            this.$axios.post('https://localhost:888/goodsLog/FindOneGoodPriceLog', {
+              cid: value3
+            })
+              .then((response) => {
+                this.existgood = false
+                this.selfGoodsLook = true
+                alert("" + response.data)
+                console.log(response.data)
+                this.objproject = response.data
+                // this.hello = response.data.content.test
+                // this.MESS = response.data.content.passsss
+                // this.pass = response.data.content.nasme
+              })
+          }else{
+            this.$message({
+              showClose: true,
+              message: '用户未登录，请登录后再进行订阅',
+              type: 'error'
+            });
+          }
+        },
+        drawPie(id){ //画图工具的实现。暂时无用
           this.charts = echarts.init(document.getElementById(id))
           this.charts.setOption({
             tooltip: {
@@ -364,24 +419,28 @@
 <style scoped>
   .top_SYSTEM{
     background-image: url("../assets/bg.jpg");
-    padding: 0px;
-    margin: -8px;
-    position: absolute;
-    width:100%;;
-    min-width: 1000px;
-    z-index:-10;
-    zoom: 1;
-    background-repeat: no-repeat;
-    background-size: cover;
-    -webkit-background-size: cover;
-    -o-background-size: cover;
-    background-position: center 0;
+    background-size:100% 100%;
+    height:auto;
+    width:100%;
+
+    /*margin: -8px;*/
+    /*padding: 0px;*/
+    /*position: absolute;*/
+    /*width:100%;;*/
+    /*min-width: 1000px;*/
+    /*z-index:-10;*/
+    /*zoom: 1;*/
+    /*-webkit-background-size: cover;*/
+    /*-o-background-size: cover;*/
+    /*background-position: center 0;*/
   }
   .tac{
     width:100%;
   }
   body{
+
     background: cadetblue;
+    height: 100%;
 
   }
   .title_header{
@@ -435,22 +494,11 @@
 
 
   }
-  /*.item {*/
-    /*margin-top: 10px;*/
-    /*margin-right: 40px;*/
-  /*}*/
+
   .inputs{
     width:500px;
 
   }
-  /*.container{*/
-    /*width:1950px;*/
-    /*height:1800px;*/
-    /*background-repeat: no-repeat;*/
-    /*background-color:bisque;*/
-  /*}*/
-
-
   /*布局格式CSS样式*/
   .el-row {
     margin-bottom: 20px;
