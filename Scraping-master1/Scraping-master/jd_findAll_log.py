@@ -176,7 +176,7 @@ if __name__ == '__main__':
     print(results)
     for url in results:
         ul = []
-        #print(j.getname(url))
+        #print(j.getname(url[0]))
         ul.append(j.getname(url[0]))#商品名称
         ul.append(j.getprice(url[0]))#价格
         ul.append(j.getseller(url[0]))#店铺

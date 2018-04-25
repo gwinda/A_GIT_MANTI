@@ -96,14 +96,16 @@
          </el-aside>
          <el-container>
            <el-main>
-             <div class="sousuo">
+             <div class="sousuo" >
                <!--<el-autocomplete placeholder="请输入内容" class="inputs" v-model="hello"></el-autocomplete>-->
                <el-input placeholder="请输入内容" class="inputs" v-model="inputLink"></el-input>
                <el-button  type="primary" round  @click="Goodsearch" >搜索</el-button><br/>
-               <div style="height: 600px">
+               <!--start -->
+               <div style="height: 20%">
                  <el-row>
                    <el-col :span="24">
-                     <div class="grid-content bg-purple-dark">
+                     <div>
+                       <!--start 链接搜索结果,返回商品信息-->
                        <div v-show="existgood">
                          <el-container style=" height:200px ; width:100%;">
                            <el-aside width="160px" style="height:200px ;background-color: #B3C0D1;line-height: 16px;">
@@ -119,6 +121,8 @@
                            </el-main>
                          </el-container>
                        </div>
+                       <!--End 链接搜索结果,返回商品信息-->
+                       <!--start 个人已订阅商品信息-->
                        <div v-show="selfGoodsLook">
                          <div v-for ="arr in objproject ">
                            <el-container style=" height:200px ; width:100%;">
@@ -130,7 +134,6 @@
                                  <el-row > 商品名称：{{arr.cName}}</el-row>
                                  <el-row > 商品价格：{{arr.cLowestPrice}}</el-row>
                                  <el-row > <a  v-bind:href="[''+arr.cLink]" target="_blank">进入详情页</a> <el-button type="primary" round  style="float: right" @click="FindOneGoodLog(arr.cid)" >查看该商品记录</el-button></el-row>
-
                                </div>
                              </el-main>
                            </el-container>
@@ -142,6 +145,31 @@
                            :total="50">
                          </el-pagination>
                        </div>
+                       <!--End 个人已订阅商品信息-->
+                       <!--start 个人已订阅商品信息管理列表-->
+                       <div v-show="selfGoodsLook">
+                         <div v-for ="arr in objproject ">
+                           <el-container style=" height:200px ; width:100%;">
+                             <el-aside width="160px" style="height:200px ;background-color: #B3C0D1;line-height: 16px;">
+                               <img  v-bind:src="[arr.cPicture]" style="margin:0px; padding:0px;height: 197px; width:160px;"/>
+                             </el-aside>
+                             <el-main style="height:200px ;width:100%;;background-color: white;">
+                               <div class = "goodsList_Layout">
+                                 <el-row > 商品名称：{{arr.cName}}</el-row>
+                                 <el-row > 商品价格：{{arr.cLowestPrice}}</el-row>
+                                 <el-row > <a  v-bind:href="[''+arr.cLink]" target="_blank">进入详情页</a> <el-button type="primary" round  style="float: right" @click="FindOneGoodLog(arr.cid)" >查看该商品记录</el-button></el-row>
+                               </div>
+                             </el-main>
+                           </el-container>
+                           <h4></h4>
+                         </div>
+                         <el-pagination
+                           small
+                           layout="prev, pager, next"
+                           :total="50">
+                         </el-pagination>
+                       </div>
+                       <!--End 个人已订阅商品信息-->
                      </div>
                    </el-col>
                  </el-row>
@@ -149,28 +177,23 @@
                  <el-col :span="24"></el-col>
                </el-row>
                </div>
+               <!--End-->
                <div class ='search-out-page'>
-                 <!--<el-table-->
-                   <!--:data="tableData"-->
-                   <!--stripe-->
-                   <!--style="width: 100%">-->
-                   <!--<el-table-column-->
-                     <!--prop="date"-->
-                     <!--label="日期"-->
-                     <!--width="180">-->
-                   <!--</el-table-column>-->
-                   <!--<el-table-column-->
-                     <!--prop="name"-->
-                     <!--label="姓名"-->
-                     <!--width="180">-->
-                   <!--</el-table-column>-->
-                   <!--<el-table-column-->
-                     <!--prop="address"-->
-                     <!--label="地址">-->
-                   <!--</el-table-column>-->
-                 <!--</el-table>-->
+
+                 <!--start 单个商品的价格走势图-->
+                 <div v-show="FindOneLog">
+                   <el-breadcrumb separator="/">
+                     <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                     <el-breadcrumb-item >个人消息</el-breadcrumb-item>
+                     <el-breadcrumb-item >所有已订阅商品</el-breadcrumb-item>
+                     <el-breadcrumb-item>商品价格走势</el-breadcrumb-item>
+                   </el-breadcrumb>
+                   <div id="main" style="width: 600px;height: 400px;"></div>
+                 </div>
+                 <!--End 单个商品的价格走势图-->
                </div>
              </div>
+
            </el-main>
            <el-footer>Footer</el-footer>
          </el-container>
@@ -203,6 +226,7 @@
           existgood:false,
           myselfSee: false,
           selfGoodsLook:false,
+          FindOneLog:false,
           objproject:null,
 
           tableData: [{
@@ -218,16 +242,6 @@
             name: '王小虎',
             address: '上海市普陀区金沙江路 1519 弄'
           }],
-
-          charts: '',
-          opinion:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎'],
-          opinionData:[
-            {value:335, name:'直接访问'},
-            {value:310, name:'邮件营销'},
-            {value:234, name:'联盟广告'},
-            {value:135, name:'视频广告'},
-            {value:1548, name:'搜索引擎'}
-          ]
 
         }
       },
@@ -257,19 +271,28 @@
             })
         },
         Goodsearch(){ //根据商品链接搜索商品数据
+          this.FindOneLog = false
           let that = this
-          this.$axios.post('https://localhost:888/goodsLog/search', {
-            cLink: this.inputLink
-          })
-            .then((response) => {
-              console.log(response.data[0])
-              this.hello = response.data[0].cName
-              this.goodPrice = response.data[0].cLowestPrice
-              this.CId =  response.data[0].cid
-              this.imgSrc = response.data[0].cPicture
-              this.existgood = true
-
+          if(this.inputLink) {
+            this.$axios.post('https://localhost:888/goodsLog/search', {
+              cLink: this.inputLink
             })
+              .then((response) => {
+                console.log(response.data[0])
+                this.hello = response.data[0].cName
+                this.goodPrice = response.data[0].cLowestPrice
+                this.CId = response.data[0].cid
+                this.imgSrc = response.data[0].cPicture
+                this.existgood = true
+
+              })
+          }else{
+            this.$message({
+              showClose: true,
+              message: '未输入内容，请重试',
+              type: 'warning'
+            });
+          }
         },
         handleSelect(key, keyPath) {
           console.log(key, keyPath);
@@ -285,7 +308,7 @@
             cId: value2
           })
             .then((response) => {
-              alert("" + response.data)
+              //alert("" + response.data)
               console.log(response.data.content)
              // this.hello = response.data.content.test
               // this.MESS = response.data.content.passsss
@@ -305,6 +328,7 @@
         },
         signOut(){ //注销登录
           this.myselfSee = false
+          this.FindOneLog = false
           this.user_id= ''
           this.username = ''
           this.$message({
@@ -322,6 +346,7 @@
           });
         },
         seemyGoods(){ //查看已登录用户的所有商品
+          this.FindOneLog = false
           if(this.user_id){
             let that = this
             this.$axios.post('https://localhost:888/api/SearchSelfGoods', {
@@ -330,12 +355,8 @@
               .then((response) => {
                 this.existgood = false
                 this.selfGoodsLook = true
-                alert("" + response.data)
                 console.log(response.data)
                 this.objproject = response.data
-                // this.hello = response.data.content.test
-                // this.MESS = response.data.content.passsss
-                // this.pass = response.data.content.nasme
               })
           }else{
             this.$message({
@@ -346,18 +367,61 @@
           }
         },
         FindOneGoodLog(value3){
-          alert(value3)
+          var myChart = echarts.init(document.getElementById('main'));
+          // 显示标题，图例和空的坐标轴
+          myChart.setOption({
+            title: {
+              text: '商品价格走势图'
+            },
+            tooltip: {},
+            legend: {
+              data:['价格']
+            },
+            xAxis: {
+              type: 'category',
+              data: []
+            },
+            yAxis: { type :'value'},
+            series: [{
+              name: '价格',
+              type: 'line',
+              data: []
+            }]
+          });
+
           if(this.user_id){
             let that = this
             this.$axios.post('https://localhost:888/goodsLog/FindOneGoodPriceLog', {
-              cid: value3
+              cid: value3  //将商品ID作为参数传给后端
             })
               .then((response) => {
                 this.existgood = false
-                this.selfGoodsLook = true
-                alert("" + response.data)
+                this.selfGoodsLook = false
+                this.FindOneLog = true
+                let arr_price = []
+                let arr_date = []
+                for (let index in response.data) {//遍历数据，将价格存在array中
+                  arr_price.push(response.data[index].clPrice)
+                  arr_date.push(response.data[index].clDateTime.substring(0,10))
+                }
                 console.log(response.data)
                 this.objproject = response.data
+                //填入数据
+                myChart.setOption({
+                  xAxis: {
+                    data: arr_date
+                  },
+                  series: [{
+                    // 根据名字对应到相应的系列
+                    name: '实时价格',
+                    data: arr_price,
+                    label: { //折线上显示价格
+                      normal: {
+                        show: true,
+                      }
+                    }
+                  }]
+                });
                 // this.hello = response.data.content.test
                 // this.MESS = response.data.content.passsss
                 // this.pass = response.data.content.nasme
@@ -365,51 +429,10 @@
           }else{
             this.$message({
               showClose: true,
-              message: '用户未登录，请登录后再进行订阅',
+              message: '用户未登录，请登录后再进行查看',
               type: 'error'
             });
           }
-        },
-        drawPie(id){ //画图工具的实现。暂时无用
-          this.charts = echarts.init(document.getElementById(id))
-          this.charts.setOption({
-            tooltip: {
-              trigger: 'item',
-              formatter: '{a}<br/>{b}:{c} ({d}%)'
-            },
-            legend: {
-              orient: 'vertical',
-              x: 'left',
-              data:this.opinion
-            },
-            series: [
-              {
-                name:'访问来源',
-                type:'pie',
-                radius:['50%','70%'],
-                avoidLabelOverlap: false,
-                label: {
-                  normal: {
-                    show: false,
-                    position: 'center'
-                  },
-                  emphasis: {
-                    show: true,
-                    textStyle: {
-                      fontSize: '30',
-                      fontWeight: 'blod'
-                    }
-                  }
-                },
-                labelLine: {
-                  normal: {
-                    show: false
-                  }
-                },
-                data:this.opinionData
-              }
-            ]
-          })
         }
       }
     }
