@@ -12,6 +12,7 @@ import re
 import json
 import time
 import pymysql
+import urllib.request
 
 #爬取页面链接
 class JDMonitoringEngine():
@@ -37,6 +38,7 @@ class JDMonitoringEngine():
 #链接单页面
     def link_to_url(self,link):
         try:
+                #time.sleep(1)
                 r = requests.get(link)
                 r.raise_for_status
                 r.encoding = 'gbk'
@@ -47,11 +49,23 @@ class JDMonitoringEngine():
 
 
 #爬取商品价格
-    def getprice(self,purl):
+    def getprice(self,purl,price_old):
         uid = re.match(r'.+?(\d+).+',purl).group(1)
-        content = self.link_to_url('https://p.3.cn/prices/mgets?skuIds=J_' + uid)
+        html = self.link_to_url(purl)
+        price = re.findall('<del id="page_origin_price">(.*?)</del>', html)
+        url_p = 'https://p.3.cn/prices/mgets?skuIds=J_' + uid+'&&pdtk=&pduid'
+        #print(url_p)
+        content = self.link_to_url('https://p.3.cn/prices/mgets?skuIds=J_4824733&&pdtk=&pduid')
         jd = json.loads(content.lstrip('[').rstrip(']\n'))#生成json数据格式
-        return jd['p']
+        #print(content)
+        #print(content)
+        if price:
+            return price[0][1:]
+        elif "id" in jd:
+            return jd["p"]
+        else:
+            return price_old
+
 
 #爬取商品评论
     def getcomment(self,purl):
@@ -168,7 +182,7 @@ class JDMonitoringEngine():
 if __name__ == '__main__':
     j = JDMonitoringEngine()
     cursor = j.conndb()
-    sql1 = "SELECT CLink FROM commodities "
+    sql1 = "SELECT CLink,CLowestPrice FROM commodities "
     # 执行SQL语句
     cursor.execute(sql1)
     # 获取所有记录列表
@@ -176,9 +190,9 @@ if __name__ == '__main__':
     print(results)
     for url in results:
         ul = []
-        #print(j.getname(url[0]))
+        print(j.getname(url[0]))
         ul.append(j.getname(url[0]))#商品名称
-        ul.append(j.getprice(url[0]))#价格
+        ul.append(j.getprice(url[0],url[1]))#价格
         ul.append(j.getseller(url[0]))#店铺
         ul.append(url[0])#链接
         #print('https:' + url)

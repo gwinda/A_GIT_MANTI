@@ -165,5 +165,45 @@ public class UsersController {
     }
 
 
+    @ResponseBody
+    @RequestMapping("api/updatePwd")
+    public String updatePwdSubmit(@RequestBody UsersEntity inputParamer,@RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter ) {
+        def uid = inputParamer.getUid()
+        def  passwordsignup = inputParamer.getuPassWord()
+        try {
+            if (usersService.exists(emailsignup)) {
+                UsersEntity userMess = usersService.findUsersEntityByUId(uid)
+                def UName= userMess.getUname()
+                UsersEntity Users = new UsersEntity()
+                Users.setUid(uid)
+                Users.setuNumber(userMess.getuNumber())
+                Users.setUname(UName)
+                Users.setuPassWord(passwordsignup)
+                def resll = userDao.save(Users)
+                println resll
+                contentFormatter.content().'content' {
+                    'outputMess' '1'
+                }
+                //return 'loginOrReg.html'
+            }else{
+                contentFormatter.content().'content' {
+                    'outputMess' '-1'
+                }
+            }
+
+        }
+        catch (Exception ex) {
+            println ex.printStackTrace();
+            contentFormatter.content().'content' {
+                'outputMess' '0'
+            }
+            //return 'loginOrReg.html'
+        }
+        return contentFormatter.toString()
+    }
+
+
+
+
 }
 

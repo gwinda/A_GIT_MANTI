@@ -16,4 +16,5 @@ public interface CommoditiesEntityDao extends JpaRepository<CommoditiesEntity, L
     CommoditiesEntity findCommoditiesEntityBycid(int cid);
 
 
+
 }

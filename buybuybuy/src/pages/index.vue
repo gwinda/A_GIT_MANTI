@@ -67,7 +67,7 @@
                    <el-menu-item-group>
                      <!--<template slot="title">查看个人信息</template>-->
                      <el-menu-item index="1-1"> <i class="el-icon-view"></i>账号信息</el-menu-item>
-                     <el-menu-item index="1-2"><i class="el-icon-edit"></i>修改密码</el-menu-item>
+                     <el-menu-item index="1-2" ><i class="el-icon-edit"></i><span @click = 'toupdatePWDContent'>修改密码</span></el-menu-item>
                    </el-menu-item-group>
                  </el-submenu>
                  <el-menu-item index="2">
@@ -170,6 +170,17 @@
                          </el-pagination>
                        </div>
                        <!--End 个人已订阅商品信息-->
+                       <div v-show="updatepwdContent">
+                         <el-container style=" height:200px ; width:100%;">
+                           <el-main style="height:200px ;width:100%;;background-color: white;">
+                             <el-input v-model="oldPass"></el-input>
+                             <el-input v-model="newPass"></el-input>
+                             <el-input v-model="newPass2"></el-input>
+                             <el-button @click="updatePWD">修改</el-button>
+                           </el-main>
+                         </el-container>
+
+                       </div>
                      </div>
                    </el-col>
                  </el-row>
@@ -228,6 +239,10 @@
           selfGoodsLook:false,
           FindOneLog:false,
           objproject:null,
+          updatepwdContent:false,
+          oldPass:'',
+          newPass:'',
+          newPass2:'',
 
           tableData: [{
             date: '2016-05-02',
@@ -269,6 +284,13 @@
               this.MESS = response.data.content.passsss
               this.pass = response.data.content.nasme
             })
+        },
+        toupdatePWDContent(){
+          this.selfGoodsLook=false
+          this.FindOneLog = false
+          this.existgood = false
+          this.updatepwdContent = true
+
         },
         Goodsearch(){ //根据商品链接搜索商品数据
           this.FindOneLog = false
@@ -336,6 +358,40 @@
             message: '账号已成功注销'
           });
           this.$router.push('/')
+        },
+        updatePWD(){
+          if(this.user_id){
+            if(this.newPass===this.newPass2){
+              this.$message({
+                showClose: true,
+                message: '确认密码与密码不一致',
+                type: 'error'
+              });
+            }else if(this.oldPass != this.newPas){
+              this.$message({
+                showClose: true,
+                message: '新密码与旧密码不能一样',
+                type: 'error'
+              });
+            }else{
+              let that = this
+              this.$axios.post('https://localhost:888/api/updatePwd', {
+                uId: this.user_id,
+                uPassWord: this.newPass,
+              })
+                .then((response) => {
+                  //alert("" + response.data)
+                  console.log(response.data.content)
+                })
+            }
+          }else{
+            this.$message({
+              showClose: true,
+              message: '用户未登录，请登录后再进行订阅',
+              type: 'error'
+            });
+            // alert("用户未登录，请登录后再进行订阅")
+          }
         },
         open() { //消息通知的一种方式，暂时无用
 

@@ -3,6 +3,7 @@ package com.workspace.server.service
 import com.workspace.server.dao.UserEntityDao
 import com.workspace.server.dao.UsersEntityDao
 import com.workspace.server.model.UserEntity
+import com.workspace.server.model.UsersEntity
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,6 +23,7 @@ class UsersEntityService {
     List<UserEntity> findUsersEntityByUId(int UId) {
         return usersEntityDao.findUsersEntityByuid(UId)
     }
+
 
    boolean exists (String UNumber) {
        def list_size=  usersEntityDao.findUsersEntityByuNumber(UNumber).size()

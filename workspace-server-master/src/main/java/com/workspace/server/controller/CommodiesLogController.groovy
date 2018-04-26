@@ -17,8 +17,6 @@ class CommodiesLogController {
 
     @Autowired CommoditiesLogEntityDao CommoditiesLogDao
     @Autowired CommditiesLogEntityService CommditiesLogService
-//    @Autowired CommoditiesLogEntityDao commDao
-//     @Autowired CommditiesLogEntityService commService
 
 
     @ResponseBody
@@ -29,17 +27,13 @@ class CommodiesLogController {
         def jsonOutput = new JsonOutput()
         //搜索框传进来的数据可能是链接，也有可能是关键字，首先要进行判断是否为链接，链接则直接查询链接，不是链接的话就进行商品名称的模糊搜索
         def result =null
-        println cid
         if(cid) {
             //判断链接是否已存在
-
             if (CommditiesLogService.exists(cid)) {
                 def outputList = CommditiesLogService.findCommoditiesLogEntityBycid(cid)
                 result = jsonOutput.toJson(outputList)
-                println result
             } else {
                 result = jsonOutput.toJson("{'result':'-1'}")
-                println result
 
             }
 
