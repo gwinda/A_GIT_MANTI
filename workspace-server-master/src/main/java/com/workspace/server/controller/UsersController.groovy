@@ -6,6 +6,7 @@ import com.workspace.server.interceptor.ContentFormatInterceptor
 import com.workspace.server.model.UsersEntity
 import com.workspace.server.service.UsersEntityService
 import com.workspace.server.util.ContentFormatter
+import groovy.json.JsonOutput
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -201,6 +202,29 @@ public class UsersController {
         }
         return contentFormatter.toString()
     }
+
+    @ResponseBody
+    @RequestMapping("api/searchMessByUid") //用户个人信息查询
+    public String searchMessByUid(@RequestBody UsersEntity inputParamer,@RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter ) {
+        def uid = inputParamer.getUid()
+        def jsonOutput = new JsonOutput()
+        def result =null
+        try {
+            if (uid!=''&&uid!=0) {
+                UsersEntity userMess = usersService.findUsersEntityByUId(uid)
+                result = jsonOutput.toJson(userMess)
+            }else{
+                result = jsonOutput.toJson("{'result':'-1'}")
+            }
+
+        }
+        catch (Exception ex) {
+            println ex.printStackTrace();
+            result = jsonOutput.toJson("{'result':'-1'}")
+        }
+        return result.toString()
+    }
+
 
 
 

@@ -65,10 +65,10 @@ class CommodiesController {
                         log.setClPrice(outputList[0].getcLowestPrice())
                         log.setClName(outputList[0].getcName())
                         //将数据存在数据库（商品实时记录表），并返回结果， 0 表示 成功 ， 1 表示 失败
-                        def insertLogResult = commDao.save(log)
-                        if(insertLogResult == 0){
-                            println "success"
-                        }
+                        //def insertLogResult = commDao.save(log)
+//                        if(insertLogResult == 0){
+//                            println "success"
+//                        }
                         result = jsonOutput.toJson(outputList)
                         println("hello "+result)
                     }else{
