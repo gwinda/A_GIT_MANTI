@@ -1,9 +1,12 @@
 package com.workspace.server.controller
 
 import com.sun.deploy.net.HttpRequest
+import com.workspace.server.dao.UserfeedbackEntityDao
 import com.workspace.server.dao.UsersEntityDao
 import com.workspace.server.interceptor.ContentFormatInterceptor
+import com.workspace.server.model.UserfeedbackEntity
 import com.workspace.server.model.UsersEntity
+import com.workspace.server.service.UserfeedbackEntityService
 import com.workspace.server.service.UsersEntityService
 import com.workspace.server.util.ContentFormatter
 import groovy.json.JsonOutput
@@ -36,7 +39,8 @@ public class UsersController {
 
     @Autowired UsersEntityDao userDao
     @Autowired UsersEntityService usersService
-
+    @Autowired UserfeedbackEntityService userfeedbackService
+    @Autowired UserfeedbackEntityDao userfeedbackDao
     @ResponseBody
     @RequestMapping("api/register")
     public String greetingSubmit(@RequestBody UsersEntity inputParamer,@RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter ) {
@@ -114,55 +118,14 @@ public class UsersController {
     @ResponseBody
     @RequestMapping("/api/search65435453456454")
     String getSearchResultViaAjax(@RequestBody @Validated UsersEntity search,@RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter) {
-//        def pass = search.getuPassWord()
-//        def number=search.getuNumber()
-//        println number
-//        List<UsersEntity> dd=usersService.findUsersEntityByuNumber(number)
-//        println dd.size()
-//        if(!usersService.exists(number)){
-//            contentFormatter.content().'content' {
-//                'test' 'test123'
-//                'passsss'  pass
-//                'nasme' '用户不存在'
-//            }
-//        }else{
-
             contentFormatter.content().'content' {
                 'test' 'test123'
                 'passsss'  'jjj'
                 'nasme' '用户存在么么'
             }
-     //   }
-
-//        if(errors.hasErrors()) {
-//            result.setMsg(errors.getAllErrors()
-//                    .stream().map(x -> x.getDefaultMessage())
-//                    .collect(Collectors.joining(",")));
-//            return ResponseEntity.badRequest().body(result);
-//        }
-
-//       def  users = usersService.exists(search.getUsername())
         println 'jj'
-//        if(users){
-//            contentFormatter.content().'workspace_content' {
-//                'result_code' 'true'
-//            }
-//        }else{
-//            contentFormatter.content().'workspace_content' {
-//                'result_code' 'flase'
-//            }
-//        }
-
         return contentFormatter.toString()
 
-//       if(users.isEmpty()) {
-//            result.setMsg("no user found!");
-//        }else {
-//            result.setMsg("success");
-//        }
-//        result.setResult(users);
-
-        // return ResponseEntity.ok(result);
     }
 
 
@@ -213,6 +176,33 @@ public class UsersController {
             if (uid!=''&&uid!=0) {
                 UsersEntity userMess = usersService.findUsersEntityByUId(uid)
                 result = jsonOutput.toJson(userMess)
+            }else{
+                result = jsonOutput.toJson("{'result':'-1'}")
+            }
+
+        }
+        catch (Exception ex) {
+            println ex.printStackTrace();
+            result = jsonOutput.toJson("{'result':'-1'}")
+        }
+        return result.toString()
+    }
+
+
+    @ResponseBody
+    @RequestMapping("api/feedbackMsgToSystem") //用户信息反馈信息插入
+    public String feedbackMsg(@RequestBody UserfeedbackEntity inputParamer, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter ) {
+        def uid = inputParamer.getuId()
+        def jsonOutput = new JsonOutput()
+        def result =null
+        try {
+            if (uid!=''&&uid!=0) {
+                def res = userfeedbackDao.save(inputParamer)
+                if(res == 0){
+                    result = jsonOutput.toJson("{'result':'0'}")
+                }else {
+                    result = jsonOutput.toJson("{'result':'-1'}")
+                }
             }else{
                 result = jsonOutput.toJson("{'result':'-1'}")
             }

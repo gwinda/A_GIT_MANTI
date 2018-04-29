@@ -88,7 +88,7 @@
                  </el-menu-item>
                  <el-menu-item index="5">
                    <i class="el-icon-message"></i>
-                   <span slot="title">信息反馈</span>
+                   <span slot="title"  @click = 'feedbackMsg'>信息反馈</span>
                  </el-menu-item>
                </el-menu>
              </el-col>
@@ -146,41 +146,27 @@
                          </el-pagination>
                        </div>
                        <!--End 个人已订阅商品信息-->
-                       <!--start 个人已订阅商品信息管理列表-->
-                       <div v-show="selfGoodsLook">
-                         <div v-for ="arr in objproject ">
-                           <el-container style=" height:200px ; width:100%;">
-                             <el-aside width="160px" style="height:200px ;background-color: #B3C0D1;line-height: 16px;">
-                               <img  v-bind:src="[arr.cPicture]" style="margin:0px; padding:0px;height: 197px; width:160px;"/>
-                             </el-aside>
-                             <el-main style="height:200px ;width:100%;;background-color: white;">
-                               <div class = "goodsList_Layout">
-                                 <el-row > 商品名称：{{arr.cName}}</el-row>
-                                 <el-row > 商品价格：{{arr.cLowestPrice}}</el-row>
-                                 <el-row > <a  v-bind:href="[''+arr.cLink]" target="_blank">进入详情页</a> <el-button type="primary" round  style="float: right" @click="FindOneGoodLog(arr.cid)" >查看该商品记录</el-button></el-row>
-                               </div>
-                             </el-main>
-                           </el-container>
-                           <h4></h4>
-                         </div>
-                         <el-pagination
-                           small
-                           layout="prev, pager, next"
-                           :total="50">
-                         </el-pagination>
-                       </div>
-                       <!--End 个人已订阅商品信息-->
                        <div v-show="updatepwdContent">
-                         <el-container style=" height:200px ; width:100%;">
+                         <el-container style=" height:400px ; width:100%;">
                            <el-main style="height:200px ;width:100%;;background-color: white;">
-                             <el-input v-model="oldPass"></el-input>
-                             <el-input v-model="newPass"></el-input>
-                             <el-input v-model="newPass2"></el-input>
+                             旧密码：<el-input v-model="oldPass" :aria-placeholder="输入旧密码"></el-input>
+                             新密码：<el-input v-model="newPass"></el-input>
+                             确认新密码：<el-input v-model="newPass2"></el-input>
                              <el-button @click="updatePWD">修改</el-button>
                            </el-main>
                          </el-container>
 
                        </div>
+                       <div v-show="tofeedback">
+                         <el-container style=" height:400px ; width:100%;">
+                           <el-main style="height:200px ;width:100%;;background-color: white;">
+                             旧密码：<el-input v-model="userContent" ></el-input>
+                             <el-button @click="feedbackMsg">修改</el-button>
+                           </el-main>
+                         </el-container>
+
+                       </div>
+
                      </div>
                    </el-col>
                  </el-row>
@@ -219,30 +205,32 @@
 <script>
   import echarts from 'echarts'
     export default {
-        name: "index",
-      data(){
-        return  {
+      name: "index",
+      data() {
+        return {
           hello: '',
-          MESS:'',
+          MESS: '',
           pass: '',
           activeIndex: '1',
           activeIndex2: '1',
-          user_id:'',
-          username :'',
+          user_id: '',
+          username: '',
           inputLink: '',
-          goodPrice:'',
+          goodPrice: '',
           showmyselfNav: false,
-          imgSrc :'',
-          CId :'',
-          existgood:false,
+          imgSrc: '',
+          CId: '',
+          existgood: false,
           myselfSee: false,
-          selfGoodsLook:false,
-          FindOneLog:false,
-          objproject:null,
-          updatepwdContent:false,
-          oldPass:'',
-          newPass:'',
-          newPass2:'',
+          selfGoodsLook: false,
+          FindOneLog: false,
+          objproject: null,
+          updatepwdContent: false,
+          oldPass: '',
+          newPass: '',
+          newPass2: '',
+          tofeedback:false,
+          userContent:'',
 
           tableData: [{
             date: '2016-05-02',
@@ -260,7 +248,7 @@
 
         }
       },
-      mounted(){
+      mounted() {
         this.user_id = this.$route.query.user_id;
         this.username = this.$route.query.name;
         // if(this.$route.query.addressInfo != null){
@@ -268,7 +256,7 @@
         // }else{
         //   this.getaddressinfo();
         // }
-        this.$nextTick(function() {
+        this.$nextTick(function () {
           this.drawPie('main')
         })
       },
@@ -285,45 +273,60 @@
               this.pass = response.data.content.nasme
             })
         },
-        toupdatePWDContent(){
-          this.selfGoodsLook=false
-          this.FindOneLog = false
-          this.existgood = false
-          this.updatepwdContent = true
-
-        },
-        Goodsearch(){ //根据商品链接搜索商品数据
-          this.FindOneLog = false
-          let that = this
-          if(this.inputLink) {
-            this.$axios.post('https://localhost:888/goodsLog/search', {
-              cLink: this.inputLink
+        toupdatePWDContent() { //修改密码页面跳转
+          if (this.uId) {
+            this.selfGoodsLook = false
+            this.FindOneLog = false
+            this.existgood = false
+            let that = this
+            this.$axios.post('https://localhost:888/api/searchMessByUid', {
+              uId: this.user_id,
             })
               .then((response) => {
-                console.log(response.data[0])
-                this.hello = response.data[0].cName
-                this.goodPrice = response.data[0].cLowestPrice
-                this.CId = response.data[0].cid
-                this.imgSrc = response.data[0].cPicture
-                this.existgood = true
-
+                this.updatepwdContent = true
+                //alert("" + response.data)
+                console.log(response.data)
               })
-          }else{
+          } else {
             this.$message({
               showClose: true,
               message: '未输入内容，请重试',
               type: 'warning'
             });
           }
-        },
-        handleSelect(key, keyPath) {
-          console.log(key, keyPath);
-        },
-        regAndLogin(){ //跳转到登陆注册界面
-          this.$router.push('/login');
-        },
-        UsersGoodsInsert(value2){ // 用户添加想要订阅的商品
-          if(this.user_id){
+      },
+      Goodsearch() { //根据商品链接搜索商品数据
+        this.FindOneLog = false
+        let that = this
+        if (this.inputLink) {
+          this.$axios.post('https://localhost:888/goodsLog/search', {
+            cLink: this.inputLink
+          })
+            .then((response) => {
+              console.log(response.data[0])
+              this.hello = response.data[0].cName
+              this.goodPrice = response.data[0].cLowestPrice
+              this.CId = response.data[0].cid
+              this.imgSrc = response.data[0].cPicture
+              this.existgood = true
+
+            })
+        } else {
+          this.$message({
+            showClose: true,
+            message: '未输入内容，请重试',
+            type: 'warning'
+          });
+        }
+      },
+      handleSelect(key, keyPath) {
+        console.log(key, keyPath);
+      },
+      regAndLogin() { //跳转到登陆注册界面
+        this.$router.push('/login');
+      },
+      UsersGoodsInsert(value2) { // 用户添加想要订阅的商品
+        if (this.user_id) {
           let that = this
           this.$axios.post('https://localhost:888/api/InsertSelfGoods', {
             uId: this.user_id,
@@ -332,165 +335,207 @@
             .then((response) => {
               //alert("" + response.data)
               console.log(response.data.content)
-             // this.hello = response.data.content.test
+              // this.hello = response.data.content.test
               // this.MESS = response.data.content.passsss
               // this.pass = response.data.content.nasme
             })
-          }else{
-            this.$message({
-              showClose: true,
-              message: '用户未登录，请登录后再进行订阅',
-              type: 'error'
-            });
-           // alert("用户未登录，请登录后再进行订阅")
-          }
-        },
-        seemyself(){ //已登录用户查看个人信息
-          this.myselfSee = true
-        },
-        signOut(){ //注销登录
-          this.myselfSee = false
-          this.FindOneLog = false
-          this.user_id= ''
-          this.username = ''
+        } else {
           this.$message({
             showClose: true,
-            message: '账号已成功注销'
+            message: '用户未登录，请登录后再进行订阅',
+            type: 'error'
           });
-          this.$router.push('/')
-        },
-        updatePWD(){
-          if(this.user_id){
-            if(this.newPass===this.newPass2){
-              this.$message({
-                showClose: true,
-                message: '确认密码与密码不一致',
-                type: 'error'
-              });
-            }else if(this.oldPass != this.newPas){
-              this.$message({
-                showClose: true,
-                message: '新密码与旧密码不能一样',
-                type: 'error'
-              });
-            }else{
-              let that = this
-              this.$axios.post('https://localhost:888/api/updatePwd', {
+          // alert("用户未登录，请登录后再进行订阅")
+        }
+      },
+      seemyself() { //已登录用户查看个人信息
+        this.myselfSee = true
+      },
+      signOut() { //注销登录
+        this.myselfSee = false
+        this.FindOneLog = false
+        this.user_id = ''
+        this.username = ''
+        this.$message({
+          showClose: true,
+          message: '账号已成功注销'
+        });
+        this.$router.push('/')
+      },
+      updatePWD() {
+        if (this.user_id) {
+          if (this.newPass === this.newPass2) {
+            this.$message({
+              showClose: true,
+              message: '确认密码与密码不一致',
+              type: 'error'
+            });
+          } else if (this.oldPass != this.newPas) {
+            this.$message({
+              showClose: true,
+              message: '新密码与旧密码不能一样',
+              type: 'error'
+            });
+          } else {
+            let that = this
+            this.$axios.post('https://localhost:888/api/updatePwd', {
+              uId: this.user_id,
+              uPassWord: this.newPass,
+            })
+              .then((response) => {
+                //alert("" + response.data)
+                console.log(response.data.content)
+              })
+          }
+        } else {
+          this.$message({
+            showClose: true,
+            message: '用户未登录，请登录后再进行订阅',
+            type: 'error'
+          });
+          // alert("用户未登录，请登录后再进行订阅")
+        }
+      },
+      open() { //消息通知的一种方式，暂时无用
+
+        const h = this.$createElement;
+        this.$notify({
+          title: '标题名称',
+          message: h('i', {style: 'color: teal'}, '这是提示文案这是提示文案这是提示文案这是提示文案这是提示文案这是提示文案这是提示文案这是提示文案')
+        });
+      },
+      seemyGoods() { //查看已登录用户的所有商品
+        this.updatepwdContent = false
+        this.FindOneLog = false
+        if (this.user_id) {
+          let that = this
+          this.$axios.post('https://localhost:888/api/SearchSelfGoods', {
+            uId: this.user_id,
+          })
+            .then((response) => {
+              this.existgood = false
+              this.selfGoodsLook = true
+              console.log(response.data)
+              this.objproject = response.data
+            })
+        } else {
+          this.$message({
+            showClose: true,
+            message: '用户未登录，请登录后再进行订阅',
+            type: 'error'
+          });
+        }
+      },
+        feedbackMsg(){//用户信息反馈（用户提出建议）
+          this.FindOneLog = false
+          this.selfGoodsLook = false
+          this.existgood = false
+          this.tofeedback = true
+          if (this.user_id) {
+            this.$prompt('请写下您的意见', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              // inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+              // inputErrorMessage: '邮箱格式不正确'
+            }).then(({ value }) => {
+              this.$axios.post('https://localhost:888/api/feedbackMsgToSystem', {
                 uId: this.user_id,
-                uPassWord: this.newPass,
+                userContent: this.userContent,
+
               })
                 .then((response) => {
-                  //alert("" + response.data)
-                  console.log(response.data.content)
+                  this.$message({
+                    type: 'success',
+                    message: '你的邮箱是: ' + value
+                  });
                 })
-            }
-          }else{
-            this.$message({
-              showClose: true,
-              message: '用户未登录，请登录后再进行订阅',
-              type: 'error'
+            }).catch(() => {
+              this.$message({
+                type: 'info',
+                message: '取消输入'
+              });
             });
-            // alert("用户未登录，请登录后再进行订阅")
-          }
-        },
-        open() { //消息通知的一种方式，暂时无用
-
-          const h = this.$createElement;
-          this.$notify({
-            title: '标题名称',
-            message: h('i', { style: 'color: teal'}, '这是提示文案这是提示文案这是提示文案这是提示文案这是提示文案这是提示文案这是提示文案这是提示文案')
-          });
-        },
-        seemyGoods(){ //查看已登录用户的所有商品
-          this.FindOneLog = false
-          if(this.user_id){
             let that = this
-            this.$axios.post('https://localhost:888/api/SearchSelfGoods', {
-              uId: this.user_id,
-            })
-              .then((response) => {
-                this.existgood = false
-                this.selfGoodsLook = true
-                console.log(response.data)
-                this.objproject = response.data
-              })
-          }else{
+
+          } else {
             this.$message({
               showClose: true,
               message: '用户未登录，请登录后再进行订阅',
               type: 'error'
             });
           }
-        },
-        FindOneGoodLog(value3){
-          var myChart = echarts.init(document.getElementById('main'));
-          // 显示标题，图例和空的坐标轴
-          myChart.setOption({
-            title: {
-              text: '商品价格走势图'
-            },
-            tooltip: {},
-            legend: {
-              data:['价格']
-            },
-            xAxis: {
-              type: 'category',
-              data: []
-            },
-            yAxis: { type :'value'},
-            series: [{
-              name: '价格',
-              type: 'line',
-              data: []
-            }]
-          });
 
-          if(this.user_id){
-            let that = this
-            this.$axios.post('https://localhost:888/goodsLog/FindOneGoodPriceLog', {
-              cid: value3  //将商品ID作为参数传给后端
-            })
-              .then((response) => {
-                this.existgood = false
-                this.selfGoodsLook = false
-                this.FindOneLog = true
-                let arr_price = []
-                let arr_date = []
-                for (let index in response.data) {//遍历数据，将价格存在array中
-                  arr_price.push(response.data[index].clPrice)
-                  arr_date.push(response.data[index].clDateTime.substring(0,10))
-                }
-                console.log(response.data)
-                this.objproject = response.data
-                //填入数据
-                myChart.setOption({
-                  xAxis: {
-                    data: arr_date
-                  },
-                  series: [{
-                    // 根据名字对应到相应的系列
-                    name: '实时价格',
-                    data: arr_price,
-                    label: { //折线上显示价格
-                      normal: {
-                        show: true,
-                      }
+
+        },
+      FindOneGoodLog(value3) {
+        var myChart = echarts.init(document.getElementById('main'));
+        // 显示标题，图例和空的坐标轴
+        myChart.setOption({
+          title: {
+            text: '商品价格走势图'
+          },
+          tooltip: {},
+          legend: {
+            data: ['价格']
+          },
+          xAxis: {
+            type: 'category',
+            data: []
+          },
+          yAxis: {type: 'value'},
+          series: [{
+            name: '价格',
+            type: 'line',
+            data: []
+          }]
+        });
+
+        if (this.user_id) {
+          let that = this
+          this.$axios.post('https://localhost:888/goodsLog/FindOneGoodPriceLog', {
+            cid: value3  //将商品ID作为参数传给后端
+          })
+            .then((response) => {
+              this.existgood = false
+              this.selfGoodsLook = false
+              this.FindOneLog = true
+              let arr_price = []
+              let arr_date = []
+              for (let index in response.data) {//遍历数据，将价格存在array中
+                arr_price.push(response.data[index].clPrice)
+                arr_date.push(response.data[index].clDateTime.substring(0, 10))
+              }
+              console.log(response.data)
+              this.objproject = response.data
+              //填入数据
+              myChart.setOption({
+                xAxis: {
+                  data: arr_date
+                },
+                series: [{
+                  // 根据名字对应到相应的系列
+                  name: '实时价格',
+                  data: arr_price,
+                  label: { //折线上显示价格
+                    normal: {
+                      show: true,
                     }
-                  }]
-                });
-                // this.hello = response.data.content.test
-                // this.MESS = response.data.content.passsss
-                // this.pass = response.data.content.nasme
-              })
-          }else{
-            this.$message({
-              showClose: true,
-              message: '用户未登录，请登录后再进行查看',
-              type: 'error'
-            });
-          }
+                  }
+                }]
+              });
+              // this.hello = response.data.content.test
+              // this.MESS = response.data.content.passsss
+              // this.pass = response.data.content.nasme
+            })
+        } else {
+          this.$message({
+            showClose: true,
+            message: '用户未登录，请登录后再进行查看',
+            type: 'error'
+          });
         }
       }
+    }
     }
 
 </script>

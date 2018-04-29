@@ -91,7 +91,10 @@ class UsersCommodiesController {
         List<CommoditiesEntity> List = new ArrayList<CommoditiesEntity>()
         if(input!= ''){
             //查找所有该用户已经订阅的商品 ,并查询到商品的具体信息（CommoditiesEntity）
-            def usersGoodsByUID= commService.findUsercommoditylogEntityByuId(input)
+            //def usersGoodsByUID= commService.findUsercommoditylogEntityByuId(input)
+            def usersGoodsByUID= commService.getList(1,3,input)
+            println 'wozai '
+            println usersGoodsByUID
             if(usersGoodsByUID){
                 usersGoodsByUID?.each{current_Goods->
                     CommoditiesEntity out = goodsService.findCommoditiesEntityBycid(current_Goods.getcId())

@@ -19,5 +19,4 @@ public interface UserCommoditiesLogEntityDao extends JpaRepository<Usercommodity
 
     List<UsercommoditylogEntity> findUsercommoditylogEntityBycId(int CId);
 
-
 }
