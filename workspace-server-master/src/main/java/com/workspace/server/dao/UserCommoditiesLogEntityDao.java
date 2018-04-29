@@ -1,7 +1,9 @@
 package com.workspace.server.dao;
 
+import com.github.pagehelper.Page;
 import com.workspace.server.model.UsercommoditylogEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.List;
  */
 
 @Repository
-public interface UserCommoditiesLogEntityDao extends JpaRepository<UsercommoditylogEntity, Long> {
+public interface UserCommoditiesLogEntityDao extends JpaRepository<UsercommoditylogEntity, Long> ,JpaSpecificationExecutor<UsercommoditylogEntity> {
 
     UsercommoditylogEntity findUsercommoditylogEntityByucId(int UCId);
 

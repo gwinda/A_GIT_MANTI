@@ -38,7 +38,7 @@ class JDMonitoringEngine():
 #链接单页面
     def link_to_url(self,link):
         try:
-                #time.sleep(1)
+                time.sleep(3)
                 r = requests.get(link)
                 r.raise_for_status
                 r.encoding = 'gbk'
@@ -62,6 +62,7 @@ class JDMonitoringEngine():
         if price:
             return price[0][1:]
         elif "id" in jd:
+            print(jd["p"])
             return jd["p"]
         else:
             return price_old

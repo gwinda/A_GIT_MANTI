@@ -149,7 +149,7 @@
                        <div v-show="updatepwdContent">
                          <el-container style=" height:400px ; width:100%;">
                            <el-main style="height:200px ;width:100%;;background-color: white;">
-                             旧密码：<el-input v-model="oldPass" :aria-placeholder="输入旧密码"></el-input>
+                             旧密码：<el-input v-model="oldPass"></el-input>
                              新密码：<el-input v-model="newPass"></el-input>
                              确认新密码：<el-input v-model="newPass2"></el-input>
                              <el-button @click="updatePWD">修改</el-button>

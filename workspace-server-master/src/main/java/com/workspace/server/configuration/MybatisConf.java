@@ -1,17 +1,22 @@
 package com.workspace.server.configuration;
 
-import com.github.pagehelper.PageHelper;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+/**
+ * Created by 邻家的小胖子 on 2018/4/29.
+ */
 
 import java.util.Properties;
 
-/**
- * Created by 邻家的小胖子 on 2018/4/22.
- *  MyBatis分页插件PageHelper
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.github.pagehelper.PageHelper;
+
+/*
+ * 注册MyBatis分页插件PageHelper
  */
+
 @Configuration
-public class MybatisConfig {
+public class MybatisConf {
     @Bean
     public PageHelper pageHelper() {
         System.out.println("MyBatisConfiguration.pageHelper()");

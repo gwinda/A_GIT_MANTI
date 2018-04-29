@@ -91,7 +91,7 @@ class UsersCommodiesController {
         List<CommoditiesEntity> List = new ArrayList<CommoditiesEntity>()
         if(input!= ''){
             //查找所有该用户已经订阅的商品 ,并查询到商品的具体信息（CommoditiesEntity）
-            //def usersGoodsByUID= commService.findUsercommoditylogEntityByuId(input)
+            def listcount= commService.findUsercommoditylogEntityByuId(input).size()
             def usersGoodsByUID= commService.getList(1,3,input)
             println 'wozai '
             println usersGoodsByUID
@@ -103,6 +103,7 @@ class UsersCommodiesController {
                     }
                 }
             }
+           // def ff="{'result':'"+ List+"','listcount':'"+listcount+"'}"
             result = jsonOutput.toJson(List)
         }else{ //UID 为空，则用户未登录 ,将提示信息存在result,返回json
             contentFormatter.content().'content' {
