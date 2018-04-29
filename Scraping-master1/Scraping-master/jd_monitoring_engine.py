@@ -430,7 +430,7 @@ class JDMonitoringEngine():
 
 if __name__ == "__main__":
     j = JDMonitoringEngine()
-    j.set_searching_url(_keyword="联想", _page_limit=1, _order=["sales"])
+    j.set_searching_url(_keyword="神仙水", _page_limit=1, _order=["sales"])
     url_list = j.url_list
     for _index, url_dict in enumerate(url_list):
         logger.info("Sending {0}/{1} url dict to basic info extraction".format(
