@@ -3,24 +3,23 @@ package com.workspace.server.controller;
 import org.hibernate.validator.constraints.NotBlank;
 
 public class SearchCriteria {
-	@NotBlank(message = "用户名不能为空")
-	String username	;
-	@NotBlank(message = "密码不能为空")
-	String password	;
 
-	public String getUsername() {
-		return username;
+	int uid	;
+	int currentpage	;
+
+	public int getUid() {
+		return uid;
 	}
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUid(int uid) {
+		this.uid = uid;
 	}
 
 
-	public void setPassword(String username) {
-		this.password = password;
+	public void setCurrentpage(int currentpage) {
+		this.currentpage = currentpage;
 	}
-	public String getPassword() {
-		return password;
+	public int getCurrentpage() {
+		return currentpage;
 	}
 
 

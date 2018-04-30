@@ -140,9 +140,11 @@
                            <h4></h4>
                          </div>
                          <el-pagination
-                           small
+                           background
+                           :page-size="3"
+                           :pager-count="listcount"
                            layout="prev, pager, next"
-                           :total="50">
+                           :total="listcount"@current-change="handleCurrentChange">
                          </el-pagination>
                        </div>
                        <!--End 个人已订阅商品信息-->
@@ -231,6 +233,7 @@
           newPass2: '',
           tofeedback:false,
           userContent:'',
+          listcount:1,
 
           tableData: [{
             date: '2016-05-02',
@@ -335,9 +338,11 @@
             .then((response) => {
               //alert("" + response.data)
               console.log(response.data.content)
-              // this.hello = response.data.content.test
-              // this.MESS = response.data.content.passsss
-              // this.pass = response.data.content.nasme
+              this.$message({
+                type: 'info',
+                message:  response.data.content.outputMess
+              });
+              let loadingInstance = Loading.service(options);
             })
         } else {
           this.$message({
@@ -390,7 +395,7 @@
         } else {
           this.$message({
             showClose: true,
-            message: '用户未登录，请登录后再进行订阅',
+            message: '用户未登录',
             type: 'error'
           });
           // alert("用户未登录，请登录后再进行订阅")
@@ -415,8 +420,11 @@
             .then((response) => {
               this.existgood = false
               this.selfGoodsLook = true
-              console.log(response.data)
-              this.objproject = response.data
+              console.log(response.data.CommoditiesEntitys)
+              this.objproject = response.data.CommoditiesEntitys
+              //alert(response.data.listcounts)
+              this.listcount= 0+response.data.listcounts
+              alert( this.listcount)
             })
         } else {
           this.$message({
@@ -426,6 +434,22 @@
           });
         }
       },
+        handleCurrentChange(val){
+          this.$axios.post('https://localhost:888/api/SearchSelfGoods', {
+            uId: this.user_id,
+            
+          })
+            .then((response) => {
+              this.existgood = false
+              this.selfGoodsLook = true
+              console.log(response.data.CommoditiesEntitys)
+              this.objproject = response.data.CommoditiesEntitys
+              //alert(response.data.listcounts)
+              this.listcount= 0+response.data.listcounts
+              alert( this.listcount)
+            })
+
+        },
         feedbackMsg(){//用户信息反馈（用户提出建议）
           this.FindOneLog = false
           this.selfGoodsLook = false
@@ -446,7 +470,7 @@
                 .then((response) => {
                   this.$message({
                     type: 'success',
-                    message: '你的邮箱是: ' + value
+                    message: '你的意见是: ' + value
                   });
                 })
             }).catch(() => {

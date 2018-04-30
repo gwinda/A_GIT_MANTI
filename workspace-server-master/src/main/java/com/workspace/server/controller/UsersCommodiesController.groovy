@@ -1,5 +1,6 @@
 package com.workspace.server.controller
 
+import com.fasterxml.jackson.annotation.JsonBackReference
 import com.workspace.server.dao.CommoditiesEntityDao
 import com.workspace.server.dao.CommoditiesLogEntityDao
 import com.workspace.server.dao.UserCommoditiesLogEntityDao
@@ -11,6 +12,7 @@ import com.workspace.server.service.CommditiesEntityService
 import com.workspace.server.service.CommditiesLogEntityService
 import com.workspace.server.service.UserCommditiesEntityService
 import com.workspace.server.util.ContentFormatter
+import groovy.json.JsonBuilder
 import groovy.json.JsonOutput
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -49,7 +51,7 @@ class UsersCommodiesController {
                     usercommodity.setuId(InputSearch.getuId())
                     usercommodity.setInFocus(0)
                     def insertResult = commDao.save(usercommodity)
-                    if(insertResult == 1){
+                    if(insertResult){
                         contentFormatter.content().'content' {
                             'outputMess' '新增成功'
                         }
@@ -75,6 +77,9 @@ class UsersCommodiesController {
             }
         }catch(Exception e){
             e.printStackTrace()
+            contentFormatter.content().'content' {
+                'outputMess' '新增失败，请检查网络'
+            }
         }
         return contentFormatter.toString()
     }
@@ -93,8 +98,6 @@ class UsersCommodiesController {
             //查找所有该用户已经订阅的商品 ,并查询到商品的具体信息（CommoditiesEntity）
             def listcount= commService.findUsercommoditylogEntityByuId(input).size()
             def usersGoodsByUID= commService.getList(1,3,input)
-            println 'wozai '
-            println usersGoodsByUID
             if(usersGoodsByUID){
                 usersGoodsByUID?.each{current_Goods->
                     CommoditiesEntity out = goodsService.findCommoditiesEntityBycid(current_Goods.getcId())
@@ -103,17 +106,27 @@ class UsersCommodiesController {
                     }
                 }
             }
-           // def ff="{'result':'"+ List+"','listcount':'"+listcount+"'}"
-            result = jsonOutput.toJson(List)
+            ((JsonBuilder) contentFormatter.content()) {
+                'CommoditiesEntitys' List, { CommoditiesEntity commoditiesEntity ->
+                    'cid' commoditiesEntity.cid
+                    'cPicture' commoditiesEntity.cPicture
+                    'cLink'  commoditiesEntity.cLink
+                    'cName'  commoditiesEntity.cName
+                    'cLowestPrice'  commoditiesEntity.cLowestPrice
+                }
+                'listcounts' listcount
+            }
+
+            System.err.println(contentFormatter.toString())
+            result = contentFormatter.content()
+            println result
         }else{ //UID 为空，则用户未登录 ,将提示信息存在result,返回json
             contentFormatter.content().'content' {
                 'outputMess' '用户未登录，请登录再进行订阅'
             }
             result = contentFormatter//jsonOutput.toJson("{'result':'用户未登录，请登录再进行订阅'}")
             println("连接返回结果："+result)
-
         }
-
         return result.toString()//contentFormatter.toString()
     }
 
