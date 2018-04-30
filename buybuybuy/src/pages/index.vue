@@ -97,9 +97,15 @@
          <el-container>
            <el-main>
              <div class="sousuo" >
+
                <!--<el-autocomplete placeholder="请输入内容" class="inputs" v-model="hello"></el-autocomplete>-->
                <el-input placeholder="请输入内容" class="inputs" v-model="inputLink"></el-input>
                <el-button  type="primary" round  @click="Goodsearch" >搜索</el-button><br/>
+               <!--<el-carousel indicator-position="outside">-->
+                 <!--<el-carousel-item v-for="item in 4" :key="item">-->
+                   <!--<h3>{{ item }}</h3>-->
+                 <!--</el-carousel-item>-->
+               <!--</el-carousel>-->
                <!--start -->
                <div style="height: 20%">
                  <el-row>
@@ -259,9 +265,9 @@
         // }else{
         //   this.getaddressinfo();
         // }
-        this.$nextTick(function () {
-          this.drawPie('main')
-        })
+        // this.$nextTick(function () {
+        //   this.drawPie('main')
+        // })
       },
       methods: {
         testClick() { //测试方法暂时无用
@@ -342,7 +348,7 @@
                 type: 'info',
                 message:  response.data.content.outputMess
               });
-              let loadingInstance = Loading.service(options);
+              //let loadingInstance = Loading.service(options);
             })
         } else {
           this.$message({
@@ -424,7 +430,7 @@
               this.objproject = response.data.CommoditiesEntitys
               //alert(response.data.listcounts)
               this.listcount= 0+response.data.listcounts
-              alert( this.listcount)
+              //alert( this.listcount)
             })
         } else {
           this.$message({
@@ -437,7 +443,7 @@
         handleCurrentChange(val){
           this.$axios.post('https://localhost:888/api/SearchSelfGoods', {
             uId: this.user_id,
-            
+
           })
             .then((response) => {
               this.existgood = false
@@ -446,7 +452,7 @@
               this.objproject = response.data.CommoditiesEntitys
               //alert(response.data.listcounts)
               this.listcount= 0+response.data.listcounts
-              alert( this.listcount)
+              //alert( this.listcount)
             })
 
         },
