@@ -4,11 +4,13 @@ import com.sun.deploy.net.HttpRequest
 import com.workspace.server.dao.UserfeedbackEntityDao
 import com.workspace.server.dao.UsersEntityDao
 import com.workspace.server.interceptor.ContentFormatInterceptor
+import com.workspace.server.model.CommoditiesEntity
 import com.workspace.server.model.UserfeedbackEntity
 import com.workspace.server.model.UsersEntity
 import com.workspace.server.service.UserfeedbackEntityService
 import com.workspace.server.service.UsersEntityService
 import com.workspace.server.util.ContentFormatter
+import groovy.json.JsonBuilder
 import groovy.json.JsonOutput
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -134,9 +136,10 @@ public class UsersController {
     public String updatePwdSubmit(@RequestBody UsersEntity inputParamer,@RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter ) {
         def uid = inputParamer.getUid()
         def  passwordsignup = inputParamer.getuPassWord()
+        println uid +"  "+ passwordsignup
         try {
-            if (usersService.exists(emailsignup)) {
-                UsersEntity userMess = usersService.findUsersEntityByUId(uid)
+            if (usersService.existUid(uid)) {
+                UsersEntity  userMess = usersService.findUsersEntityByuid(uid)
                 def UName= userMess.getUname()
                 UsersEntity Users = new UsersEntity()
                 Users.setUid(uid)
@@ -144,14 +147,16 @@ public class UsersController {
                 Users.setUname(UName)
                 Users.setuPassWord(passwordsignup)
                 def resll = userDao.save(Users)
-                println resll
-                contentFormatter.content().'content' {
-                    'outputMess' '1'
+                if(resll){
+                    contentFormatter.content().'content' {
+                        'outputMess' '修改成功，请重新登录'
+                    }
                 }
+
                 //return 'loginOrReg.html'
             }else{
                 contentFormatter.content().'content' {
-                    'outputMess' '-1'
+                    'outputMess' '修改失败，请重试'
                 }
             }
 
@@ -159,7 +164,7 @@ public class UsersController {
         catch (Exception ex) {
             println ex.printStackTrace();
             contentFormatter.content().'content' {
-                'outputMess' '0'
+                'outputMess' '修改失败，请重试'
             }
             //return 'loginOrReg.html'
         }
@@ -169,13 +174,22 @@ public class UsersController {
     @ResponseBody
     @RequestMapping("api/searchMessByUid") //用户个人信息查询
     public String searchMessByUid(@RequestBody UsersEntity inputParamer,@RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter ) {
-        def uid = inputParamer.getUid()
+        def var_uid= inputParamer.getUid()
+        println var_uid
         def jsonOutput = new JsonOutput()
         def result =null
         try {
-            if (uid!=''&&uid!=0) {
-                UsersEntity userMess = usersService.findUsersEntityByUId(uid)
-                result = jsonOutput.toJson(userMess)
+            if (var_uid!=''&&var_uid!=0) {
+                UsersEntity userMess = userDao.findOne(var_uid);
+                ((JsonBuilder) contentFormatter.content()) {
+                    'CommoditiesEntitys' {
+                        'uid' userMess.uid
+                        'uname' userMess.uname
+                        'uNumber'  userMess.uNumber
+                    }
+                }
+                println contentFormatter.toString()
+                result =  contentFormatter.toString()//jsonOutput.toJson(userMess)
             }else{
                 result = jsonOutput.toJson("{'result':'-1'}")
             }

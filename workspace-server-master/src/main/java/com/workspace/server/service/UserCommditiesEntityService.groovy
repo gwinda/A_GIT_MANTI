@@ -66,10 +66,9 @@ class UserCommditiesEntityService { //用户已订阅商品记录
        // 获取
         int mincout = (pageNum -1 )*pageSize
         int maxcout = (pageNum )*pageSize-1
-        println maxcout
         List<UsercommoditylogEntity> typeList = UsercomDao.findUsercommoditylogEntityByuId(Uid)
         List<UsercommoditylogEntity> selectList = new  ArrayList<UsercommoditylogEntity>()
-        //typeList.sort()
+        typeList.sort()
         typeList.eachWithIndex{  entry, i ->
             def currentcount = i
             if(currentcount ==mincout &&maxcout>=mincout){
@@ -77,7 +76,6 @@ class UserCommditiesEntityService { //用户已订阅商品记录
                 mincout++
             }
         }
-        println selectList
         return selectList;
     }
 

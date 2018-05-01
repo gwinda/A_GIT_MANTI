@@ -36,8 +36,6 @@ class UsersCommodiesController {
             if(input!= 0 &&input!= ''){
                 //查找所有该用户已经订阅的商品，看是否已存在该商品，
                 // 若存在，则不再插入数据库，返回已订阅标识，否则执行插入操作
-                println InputSearch.getcId()
-                println InputSearch.getuId()
                 def usersGoodsByUID= commService.findUsercommoditylogEntityByuId(input)
                 def existCID = false
                 usersGoodsByUID.each{current ->
@@ -60,20 +58,16 @@ class UsersCommodiesController {
                         contentFormatter.content().'content' {
                             'outputMess' '新增失败，请检查网络'
                         }
-
                     }
                 }else{
                     contentFormatter.content().'content' {
                         'outputMess' '已存在该商品，请到个人库中查找'
                     }
-
                 }
             }else{
                 contentFormatter.content().'content' {
                     'outputMess' '用户未登录，请登录再进行订阅'
                 }
-
-
             }
         }catch(Exception e){
             e.printStackTrace()
@@ -86,18 +80,20 @@ class UsersCommodiesController {
 
 
     @ResponseBody
-    @RequestMapping("/api/SearchSelfGoods") //已经登陆的用户查看所有的已订阅商品
-    String SearchSelfGoodsViaAjax(@RequestBody UsercommoditylogEntity InputSearch, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter) {
-        println InputSearch.getuId()
-        def input = InputSearch.getuId()
-        def jsonOutput = new JsonOutput()
+    @RequestMapping("/api/SearchSelfGoods") //已经登陆的用户查看所有的已订阅商品(分页版)
+    String SearchSelfGoodsViaAjax(@RequestBody SearchCriteria InputSearch, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter) {
+        def input = InputSearch.getUid()
+        def currentpage = 1
         //搜索框传进来的数据可能是链接，也有可能是关键字，首先要进行判断是否为链接，链接则直接查询链接，不是链接的话就进行商品名称的模糊搜索
         def result =null
+        if(InputSearch.getCurrentpage()>0){
+            currentpage = InputSearch.getCurrentpage()
+        }
         List<CommoditiesEntity> List = new ArrayList<CommoditiesEntity>()
         if(input!= ''){
             //查找所有该用户已经订阅的商品 ,并查询到商品的具体信息（CommoditiesEntity）
             def listcount= commService.findUsercommoditylogEntityByuId(input).size()
-            def usersGoodsByUID= commService.getList(1,3,input)
+            def usersGoodsByUID= commService.getList(currentpage,3,input)
             if(usersGoodsByUID){
                 usersGoodsByUID?.each{current_Goods->
                     CommoditiesEntity out = goodsService.findCommoditiesEntityBycid(current_Goods.getcId())
@@ -116,10 +112,7 @@ class UsersCommodiesController {
                 }
                 'listcounts' listcount
             }
-
-            System.err.println(contentFormatter.toString())
             result = contentFormatter.content()
-            println result
         }else{ //UID 为空，则用户未登录 ,将提示信息存在result,返回json
             contentFormatter.content().'content' {
                 'outputMess' '用户未登录，请登录再进行订阅'
@@ -130,6 +123,54 @@ class UsersCommodiesController {
         return result.toString()//contentFormatter.toString()
     }
 
+
+    @ResponseBody
+    @RequestMapping("/api/SearchSelfGoodsNoPage") //已经登陆的用户查看所有的已订阅商品(不分页，用来管理数据)
+    String SearchSelfGoodsNoPage(@RequestBody SearchCriteria InputSearch, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter) {
+        def input= InputSearch.getUid()
+        def jsonOutput = new JsonOutput()
+        def result = null
+        List<CommoditiesEntity> List = new ArrayList<CommoditiesEntity>()
+        if(input!= ''){
+            //查找所有该用户已经订阅的商品 ,并查询到商品的具体信息（CommoditiesEntity）
+            def usersGoodsByUID= commService.findUsercommoditylogEntityByuId(input)
+            if(usersGoodsByUID){
+                usersGoodsByUID?.each{current_Goods->
+                    CommoditiesEntity out = goodsService.findCommoditiesEntityBycid(current_Goods.getcId())
+                    if(out != null) {
+                        List.add(out)
+                    }
+                }
+            }
+            result = jsonOutput.toJson(List)
+        }else{
+            result = jsonOutput.toJson("{'result':'用户未登录，请登录再进行订阅'}")
+        }
+        return result.toString()//contentFormatter.toString()
+    }
+
+    @ResponseBody
+    @RequestMapping("/api/delGoods") //已经登陆的用户查看所有的已订阅商品(不分页，用来管理数据)
+    String delSelfGoods(@RequestBody UsercommoditylogEntity InputSearch, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter) {
+        def input= InputSearch.getUcId()
+        if(input!= ''){
+            def delResult=commDao.delete(input);
+            if(delResult){
+                contentFormatter.content().'content' {
+                    'outputMess' '成功删除'
+                }
+            }else{
+                contentFormatter.content().'content' {
+                    'outputMess' '删除结果：失败'
+                }
+            }
+        }else{
+            contentFormatter.content().'content' {
+                'outputMess' '用户未登录，请登录再进行订阅'
+            }
+        }
+        return contentFormatter.toString()
+    }
 
 
 }

@@ -1,22 +1,18 @@
 <template>
-  <div id="index">
+  <div id="index" style="margin:-8px">
    <div class="top_SYSTEM">
     <div class = 'title_header'> 商品监测对比系统</div>
-
      <!--<div id="main" style="width: 600px;height: 400px;"></div>-->
-
      <el-container>
        <el-header>
-
          <el-menu style="width: auto"
                   :default-active="activeIndex2"
                   class="el-menu-demo"
                   mode="horizontal"
-                  @select="handleSelect"
                   background-color="#545c64"
                   text-color="#fff"
                   active-text-color="#ffd04b">
-           <el-menu-item index="1">首页</el-menu-item>
+           <el-menu-item index="1" @click="goToindex" >首页</el-menu-item>
            <el-submenu index="2">
              <template slot="title">我的工作台</template>
              <el-menu-item index="2-1">选项1</el-menu-item>
@@ -52,13 +48,6 @@
              <el-col>
                <h1>个人信息 <i>{{user_id}}</i></h1>
                <el-menu  default-active="2" background-color="#545c64" class="el-menu-vertical-demo" active-text-color="#ffd04b" text-color="#fff">
-                 <!--default-active="2"-->
-                 <!--class="el-menu-vertical-demo"-->
-                 <!--@open="handleOpen"-->
-                 <!--@close="handleClose1"-->
-                 <!--background-color="#545c64"-->
-                 <!--text-color="#fff"-->
-                 <!--active-text-color="#ffd04b">-->
                  <el-submenu index="1">
                    <template slot="title">
                      <i class="el-icon-menu"></i>
@@ -66,7 +55,7 @@
                    </template>
                    <el-menu-item-group>
                      <!--<template slot="title">查看个人信息</template>-->
-                     <el-menu-item index="1-1"> <i class="el-icon-view"></i>账号信息</el-menu-item>
+                     <el-menu-item index="1-1"> <i class="el-icon-view" ></i><span @click="seeMyMsg">账号信息</span></el-menu-item>
                      <el-menu-item index="1-2" ><i class="el-icon-edit"></i><span @click = 'toupdatePWDContent'>修改密码</span></el-menu-item>
                    </el-menu-item-group>
                  </el-submenu>
@@ -97,17 +86,17 @@
          <el-container>
            <el-main>
              <div class="sousuo" >
-
-               <!--<el-autocomplete placeholder="请输入内容" class="inputs" v-model="hello"></el-autocomplete>-->
-               <el-input placeholder="请输入内容" class="inputs" v-model="inputLink"></el-input>
+               <el-input placeholder="请输入链接地址如：http://item.jd.com/5324065.html" class="inputs" v-model="inputLink"></el-input>
                <el-button  type="primary" round  @click="Goodsearch" >搜索</el-button><br/>
-               <!--<el-carousel indicator-position="outside">-->
-                 <!--<el-carousel-item v-for="item in 4" :key="item">-->
-                   <!--<h3>{{ item }}</h3>-->
-                 <!--</el-carousel-item>-->
-               <!--</el-carousel>-->
+               <div v-show="zhuye">
+                 <el-carousel indicator-position="outside">
+                   <el-carousel-item v-for="item in itemPic" :key="item">
+                     <div style="height:100%;"><img  v-bind:src="[item]" style=" width: 100%; height: 100%;" /></div>
+                   </el-carousel-item>
+                 </el-carousel>
+               </div>
                <!--start -->
-               <div style="height: 20%">
+               <div style="">
                  <el-row>
                    <el-col :span="24">
                      <div>
@@ -115,7 +104,7 @@
                        <div v-show="existgood">
                          <el-container style=" height:200px ; width:100%;">
                            <el-aside width="160px" style="height:200px ;background-color: #B3C0D1;line-height: 16px;">
-                             <img  v-bind:src="[imgSrc]" style="margin:0px; padding:0px;height: 197px; width:160px;"/>
+                             <img  v-bind:src="[imgSrc]" style="margin:0; padding:0;height: 197px; width:160px;"/>
                            </el-aside>
                            <el-main style="height:200px ;width:100%;;background-color: white;">
                              <div class = "goodsList_Layout">
@@ -129,15 +118,15 @@
                        </div>
                        <!--End 链接搜索结果,返回商品信息-->
                        <!--start 个人已订阅商品信息-->
-                       <div v-show="selfGoodsLook">
+                       <div v-show="selfGoodsLook" style="  width:100%;">
                          <div v-for ="arr in objproject ">
-                           <el-container style=" height:200px ; width:100%;">
-                             <el-aside width="160px" style="height:200px ;background-color: #B3C0D1;line-height: 16px;">
+                           <el-container style=" height:200px ; background-color: white;">
+                             <el-aside width="160px" style="height:200px ;background-color: white;line-height: 16px;">
                                <img  v-bind:src="[arr.cPicture]" style="margin:0px; padding:0px;height: 197px; width:160px;"/>
                              </el-aside>
-                             <el-main style="height:200px ;width:100%;;background-color: white;">
+                             <el-main style="height:200px ;width:200px;">
                                <div class = "goodsList_Layout">
-                                 <el-row > 商品名称：{{arr.cName}}</el-row>
+                                 <el-row style="word-wrap:break-word; word-break:break-all;"> 商品名称：{{arr.cName}}</el-row>
                                  <el-row > 商品价格：{{arr.cLowestPrice}}</el-row>
                                  <el-row > <a  v-bind:href="[''+arr.cLink]" target="_blank">进入详情页</a> <el-button type="primary" round  style="float: right" @click="FindOneGoodLog(arr.cid)" >查看该商品记录</el-button></el-row>
                                </div>
@@ -154,6 +143,20 @@
                          </el-pagination>
                        </div>
                        <!--End 个人已订阅商品信息-->
+                       <!--个人账号信息查询界面-->
+                       <div v-show="MyContentMsg">
+                         <el-container style=" height:400px ; width:100%;">
+                           <el-main style="height:200px ;width:100%;;background-color: white;">
+                             <div v-if="objproject">
+                             我的ID:{{objproject.uid}}<br/>
+                             我的账号：{{objproject.uNumber}}<br/>
+                             我的名字：{{objproject.uname}}<br/>
+                             </div>
+                           </el-main>
+                         </el-container>
+                       </div>
+                       <!--个人账号信息查询 END-->
+                       <!--个人密码修改界面-->
                        <div v-show="updatepwdContent">
                          <el-container style=" height:400px ; width:100%;">
                            <el-main style="height:200px ;width:100%;;background-color: white;">
@@ -163,18 +166,18 @@
                              <el-button @click="updatePWD">修改</el-button>
                            </el-main>
                          </el-container>
-
                        </div>
+                       <!--个人密码修改界面 END-->
+                       <!--用户反馈界面-->
                        <div v-show="tofeedback">
-                         <el-container style=" height:400px ; width:100%;">
-                           <el-main style="height:200px ;width:100%;;background-color: white;">
-                             旧密码：<el-input v-model="userContent" ></el-input>
-                             <el-button @click="feedbackMsg">修改</el-button>
-                           </el-main>
-                         </el-container>
 
                        </div>
+                       <!--用户反馈界面 END-->
+                       <!--已经订阅的商品管理界面-->
+                       <div v-show="goodsManageContent">
 
+                       </div>
+                       <!--已经订阅的商品管理界面 END-->
                      </div>
                    </el-col>
                  </el-row>
@@ -200,13 +203,16 @@
              </div>
 
            </el-main>
-           <el-footer>Footer</el-footer>
+
          </el-container>
+         <!--<el-footer>Footer</el-footer>-->
        </el-container>
      </el-container>
+     <div class="footer">
+       <label>该系统最终解释权归BuyBuyBuy所有，侵权必究</label>
+     </div>
    </div>
-    <div>
-    </div>
+
   </div>
 </template>
 
@@ -240,6 +246,10 @@
           tofeedback:false,
           userContent:'',
           listcount:1,
+          zhuye:true,
+          MyContentMsg:false,
+          goodsManageContent:false,
+          itemPic:['http://pic1.win4000.com/pic/1/23/1acf1215148.jpg','http://ww4.sinaimg.cn/bmiddle/865cea84gw1erfi2ormusg20c806sx6p.jpg','http://ww2.sinaimg.cn/large/6d1a569dtw1eftwwwdgx5g20dw06ygz4.gif','http://img3.100bt.com/upload/ttq/20130915/1379247772938_middle.gif'],
 
           tableData: [{
             date: '2016-05-02',
@@ -260,14 +270,6 @@
       mounted() {
         this.user_id = this.$route.query.user_id;
         this.username = this.$route.query.name;
-        // if(this.$route.query.addressInfo != null){
-        //   this.addressInfo = JSON.parse(this.$route.query.addressInfo);
-        // }else{
-        //   this.getaddressinfo();
-        // }
-        // this.$nextTick(function () {
-        //   this.drawPie('main')
-        // })
       },
       methods: {
         testClick() { //测试方法暂时无用
@@ -282,8 +284,45 @@
               this.pass = response.data.content.nasme
             })
         },
+        seeMyMsg(){
+          alert(this.user_id)
+          if (this.user_id) {
+            this.existgood = false //搜索商品结果界面
+            this.selfGoodsLook =false //所有已经订阅的商品结果界面
+            this.MyContentMsg =false //我的个人信息界面
+            this.updatepwdContent =false  //修改密码界面
+            this.tofeedback =false //用户反馈界面
+            this.goodsManageContent = false //商品管理界面
+            this.FindOneLog = false//商品价格记录
+            this.zhuye= false //主图走马灯
+            let that = this
+            this.$axios.post('https://localhost:888/api/searchMessByUid', {
+              uid: this.user_id,
+            })
+              .then((response) => {
+                this.MyContentMsg = true
+                this.objproject = response.data.CommoditiesEntitys
+                //alert("" + response.data)
+                console.log(response.data)
+              })
+          } else {
+            this.$message({
+              showClose: true,
+              message: '用户没登陆',
+              type: 'warning'
+            });
+          }
+        },
         toupdatePWDContent() { //修改密码页面跳转
-          if (this.uId) {
+          this.existgood = false //搜索商品结果界面
+          this.selfGoodsLook =false //所有已经订阅的商品结果界面
+          this.MyContentMsg =false //我的个人信息界面
+          this.updatepwdContent =true  //修改密码界面
+          this.tofeedback =false //用户反馈界面
+          this.goodsManageContent = false //商品管理界面
+          this.FindOneLog = false//商品价格记录
+          this.zhuye= false //主图走马灯
+          if (this.user_id) {
             this.selfGoodsLook = false
             this.FindOneLog = false
             this.existgood = false
@@ -299,13 +338,20 @@
           } else {
             this.$message({
               showClose: true,
-              message: '未输入内容，请重试',
+              message: '用户没登陆',
               type: 'warning'
             });
           }
       },
       Goodsearch() { //根据商品链接搜索商品数据
-        this.FindOneLog = false
+        ///this.existgood = false //搜索商品结果界面
+        this.selfGoodsLook =false //所有已经订阅的商品结果界面
+        this.MyContentMsg =false //我的个人信息界面
+        this.updatepwdContent =false  //修改密码界面
+        this.tofeedback =false //用户反馈界面
+        this.goodsManageContent = false //商品管理界面
+        this.FindOneLog = false//商品价格记录
+        this.zhuye= false
         let that = this
         if (this.inputLink) {
           this.$axios.post('https://localhost:888/goodsLog/search', {
@@ -363,8 +409,15 @@
         this.myselfSee = true
       },
       signOut() { //注销登录
-        this.myselfSee = false
-        this.FindOneLog = false
+        this.existgood = false //搜索商品结果界面
+        this.selfGoodsLook =false //所有已经订阅的商品结果界面
+        this.MyContentMsg =false //我的个人信息界面
+        this.updatepwdContent =false  //修改密码界面
+        this.tofeedback =false //用户反馈界面
+        this.goodsManageContent = false //商品管理界面
+        this.FindOneLog = false//商品价格记录
+        this.myselfSee = false //我的侧边菜单栏
+        this.zhuye= false //主图走马灯
         this.user_id = ''
         this.username = ''
         this.$message({
@@ -373,15 +426,15 @@
         });
         this.$router.push('/')
       },
-      updatePWD() {
+      updatePWD() { //异步修改密码功能，并返回修改结果
         if (this.user_id) {
-          if (this.newPass === this.newPass2) {
+          if (this.newPass !== this.newPass2) {
             this.$message({
               showClose: true,
               message: '确认密码与密码不一致',
               type: 'error'
             });
-          } else if (this.oldPass != this.newPas) {
+          } else if (this.oldPass === this.newPass) {
             this.$message({
               showClose: true,
               message: '新密码与旧密码不能一样',
@@ -390,11 +443,10 @@
           } else {
             let that = this
             this.$axios.post('https://localhost:888/api/updatePwd', {
-              uId: this.user_id,
+              uid: this.user_id,
               uPassWord: this.newPass,
             })
               .then((response) => {
-                //alert("" + response.data)
                 console.log(response.data.content)
               })
           }
@@ -408,7 +460,6 @@
         }
       },
       open() { //消息通知的一种方式，暂时无用
-
         const h = this.$createElement;
         this.$notify({
           title: '标题名称',
@@ -416,12 +467,14 @@
         });
       },
       seemyGoods() { //查看已登录用户的所有商品
+        this.zhuye=false
         this.updatepwdContent = false
         this.FindOneLog = false
         if (this.user_id) {
           let that = this
           this.$axios.post('https://localhost:888/api/SearchSelfGoods', {
-            uId: this.user_id,
+            uid: this.user_id,
+            currentpage:this.currentpage,
           })
             .then((response) => {
               this.existgood = false
@@ -440,14 +493,13 @@
           });
         }
       },
-        handleCurrentChange(val){
+        handleCurrentChange(val){ //点击下方的页码时候操作，异步获取某页的数据并返回
           this.$axios.post('https://localhost:888/api/SearchSelfGoods', {
-            uId: this.user_id,
+            uid: this.user_id,
+            currentpage:val,
 
           })
             .then((response) => {
-              this.existgood = false
-              this.selfGoodsLook = true
               console.log(response.data.CommoditiesEntitys)
               this.objproject = response.data.CommoditiesEntitys
               //alert(response.data.listcounts)
@@ -457,16 +509,18 @@
 
         },
         feedbackMsg(){//用户信息反馈（用户提出建议）
-          this.FindOneLog = false
-          this.selfGoodsLook = false
-          this.existgood = false
+          this.existgood = false //搜索商品结果界面
+          this.selfGoodsLook =false //所有已经订阅的商品结果界面
+          this.MyContentMsg =false //我的个人信息界面
+          this.updatepwdContent =false  //修改密码界面
+          this.goodsManageContent = false //商品管理界面
+          this.FindOneLog = false//商品价格记录
+          this.zhuye= false //主图走马灯
           this.tofeedback = true
           if (this.user_id) {
             this.$prompt('请写下您的意见', '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
-              // inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-              // inputErrorMessage: '邮箱格式不正确'
             }).then(({ value }) => {
               this.$axios.post('https://localhost:888/api/feedbackMsgToSystem', {
                 uId: this.user_id,
@@ -485,7 +539,6 @@
                 message: '取消输入'
               });
             });
-            let that = this
 
           } else {
             this.$message({
@@ -497,7 +550,7 @@
 
 
         },
-      FindOneGoodLog(value3) {
+      FindOneGoodLog(value3) { //查看某一商品的价格走势图
         var myChart = echarts.init(document.getElementById('main'));
         // 显示标题，图例和空的坐标轴
         myChart.setOption({
@@ -564,22 +617,29 @@
             type: 'error'
           });
         }
-      }
+      },
+        goToindex(){
+          this.$router.push('/');
+        }
     }
     }
 
 </script>
 
 <style scoped>
+  body{
+    margin:0;
+
+  }
   .top_SYSTEM{
     background-image: url("../assets/bg.jpg");
     background-size:100% 100%;
-    height:auto;
+    height:100vw;
     width:100%;
 
     /*margin: -8px;*/
     /*padding: 0px;*/
-    /*position: absolute;*/
+    position: absolute;
     /*width:100%;;*/
     /*min-width: 1000px;*/
     /*z-index:-10;*/
@@ -591,12 +651,7 @@
   .tac{
     width:100%;
   }
-  body{
 
-    background: cadetblue;
-    height: 100%;
-
-  }
   .title_header{
     /*background-color: azure;*/
     text-align: center;
@@ -606,15 +661,21 @@
     font-size: larger;
     font-style: italic;
   }
-  .el-header, .el-footer {
+  .el-header{
     /*background-color: #B3C0D1;*/
     color: #333;
     text-align: center;
     line-height: 60px;
   }
-
+  .el-footer {
+    /*background-color: #B3C0D1;*/
+    color: #333;
+    text-align: center;
+    line-height: 60px;
+    bottom: 4px;
+  }
   .el-aside {
-    height:800px;
+    /*height:800px;*/
     /*background-color: #D3DCE6;*/
     color: #333;
     text-align: center;
@@ -622,15 +683,14 @@
   }
 
   .el-main {
-    height:800px;
+    /*height:2000px;*/
     /*background-color: #E9EEF3;*/
     color: #333;
     text-align: center;
     line-height: 60px;
-  }
-
-  body > .el-container {
-    /*margin-bottom: 40px;*/
+    min-height:calc(100vw / 750 * 300);  /*屏幕自适应最小宽度*/
+    /*max-height: 100vw ;*/
+    overflow-y:hidden;
   }
 
   .el-container:nth-child(5) .el-aside,
@@ -645,6 +705,8 @@
     position: absolute;
     left: 30%;
     text-align: center;
+
+    /*height:80%;*/
 
 
   }
@@ -663,8 +725,8 @@
 
   }
   .bg-purple-dark {
-    background: white;
-    height:200px;
+    /*background: white;*/
+    /*height:200px;*/
   }
   .bg-purple {
     background: #d3dce6;
@@ -685,5 +747,17 @@
     font-size: smaller;
     text-align: left;
     line-height: 14px
+  }
+  .footer{
+    height:30px;
+    text-align: center;
+    color: white;
+    font-style:italic;
+    font-size: smaller;
+    margin-top:calc(100vw / 750 * 300);
+    text-shadow:0 0 5px rgba(0,0,0,0.5);
+    /*-webkit-filter:blur(1px);*/
+    /*filter:blur(1px);*/
+
   }
 </style>

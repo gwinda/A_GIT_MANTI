@@ -17,10 +17,10 @@ class UsersEntityService {
 
     @Autowired UsersEntityDao usersEntityDao
 
-    List<UserEntity> findUsersEntityByuNumber (String uNumber) {
+    List<UsersEntity> findUsersEntityByuNumber (String uNumber) {
         return usersEntityDao.findUsersEntityByuNumber(uNumber)
     }
-    List<UserEntity> findUsersEntityByUId(int UId) {
+    UsersEntity findUsersEntityByuid(int UId) {
         return usersEntityDao.findUsersEntityByuid(UId)
     }
 
@@ -29,6 +29,10 @@ class UsersEntityService {
        def list_size=  usersEntityDao.findUsersEntityByuNumber(UNumber).size()
        return list_size != 0
    }
+    boolean existUid (int Uid) {
+        def list_size=  usersEntityDao.findUsersEntityByuid(Uid)
+        return list_size != null
+    }
 
 
 }

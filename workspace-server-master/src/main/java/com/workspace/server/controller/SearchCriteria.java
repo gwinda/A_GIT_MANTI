@@ -1,11 +1,10 @@
 package com.workspace.server.controller;
 
-import org.hibernate.validator.constraints.NotBlank;
 
 public class SearchCriteria {
 
-	int uid	;
-	int currentpage	;
+	private int uid;
+	private  int currentpage	;
 
 	public int getUid() {
 		return uid;
