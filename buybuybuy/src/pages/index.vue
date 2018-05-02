@@ -234,6 +234,7 @@
                    <div id="main" style="width: 600px;height: 400px;"></div>
                    <div id="main2" style="width: 600px;height: 400px;"></div>
                  </div>
+
                  <!--End 单个商品的价格走势图-->
                </div>
              </div>
@@ -743,19 +744,27 @@
             }
         },
         CompareSelectedGoods(){
+          this.selfGoodsLook =false //所有已经订阅的商品结果界面
+          this.MyContentMsg =false //我的个人信息界面
+          this.updatepwdContent =false  //修改密码界面
+          this.tofeedback =false //用户反馈界面
+          this.goodsManageContent = false //商品管理界面
+          this.FindOneLog = true//商品价格记录
+          this.zhuye= false
+          alert("sss")
           console.log(this.multipleSelection)
-          var myChart = echarts.init(document.getElementById('main2'));
+          var myChart2 = echarts.init(document.getElementById('main2'));
           // 显示标题，图例和空的坐标轴
-          myChart.option = {
+          var Option = {
             title: {
               text: '折线图堆叠'
             },
             tooltip: {
               trigger: 'axis'
             },
-            legend: {
-              data:['邮件营销','联盟广告','视频广告','直接访问','搜索引擎']
-            },
+            // legend: {
+            //   data:['邮件营销','联盟广告','视频广告','直接访问','搜索引擎']
+            // },
             grid: {
               left: '3%',
               right: '4%',
@@ -770,94 +779,62 @@
             xAxis: {
               type: 'category',
               boundaryGap: false,
-              data: ['周一','周二','周三','周四','周五','周六','周日']
+              //data: ['周一','周二','周三','周四','周五','周六','周日']
             },
             yAxis: {
               type: 'value'
             },
-            series: [
-              {
-                name:'邮件营销',
-                type:'line',
-                stack: '总量',
-                data:[120, 132, 101, 134, 90, 230, 210]
-              },
-              {
-                name:'联盟广告',
-                type:'line',
-                stack: '总量',
-                data:[220, 182, 191, 234, 290, 330, 310]
-              },
-              {
-                name:'视频广告',
-                type:'line',
-                stack: '总量',
-                data:[150, 232, 201, 154, 190, 330, 410]
-              },
-              {
-                name:'直接访问',
-                type:'line',
-                stack: '总量',
-                data:[320, 332, 301, 334, 390, 330, 320]
-              },
-              {
-                name:'搜索引擎',
-                type:'line',
-                stack: '总量',
-                data:[820, 932, 901, 934, 1290, 1330, 1320]
-              }
-            ]
+            series: []
           };
+          if (this.user_id) {
+            let that = this
+            this.$axios.post('https://localhost:888/goodsLog/CompareGoodsPriceLog', this.multipleSelection)
+              .then((response) => {
+                console.log(response.data)
+                this.existgood = false
+                this.selfGoodsLook = false
+                let arr = [];
+                let arr_date = [];
+                let datavue=[]
+                for (var j = 0; j < response.data.length; j++) {//json类似一个数组，所以通过循环输出里面
+                  let a_price =[]
+                  let kkk= response.data[j][0].cid
+                  arr.push(kkk)
+                  for(var k= 0 ;k<response.data[j].length;k++){
+                    a_price.push( response.data[j][k].clPrice)
+                    arr_date.push(response.data[j][k].clDateTime)
+                  }
+                  var objproject = {
+                    name :  kkk,
+                    type:'line',
+                    stack: '总量',
+                    data: a_price
+
+                  }
+                  datavue.push(objproject);
+                }
+                myChart2.setOption({
+                  legend: {
+                    data:arr,
+                  },
+                  xAxis: {
+                    data: arr_date
+                  },
+                  series: datavue
+                });
+              })
+          } else {
+            this.$message({
+              showClose: true,
+              message: '用户未登录，请登录后再进行查看',
+              type: 'error'
+            });
+          }
+
+          myChart2.setOption(Option);
 
 
-          // if (this.user_id) {
-          //   let that = this
-          //   this.$axios.post('https://localhost:888/goodsLog/CompareGoodsPriceLog', this.multipleSelection)
-          //     .then((response) => {
-          //       console.log(response.data)
-          //       this.existgood = false
-          //       this.selfGoodsLook = false
-          //       let arr_price = [];
-          //       let arr_date = [];
-          //       let datavue=[]
-          //       for (var j = 0; j < response.data.length; j++) {//json类似一个数组，所以通过循环输出里面
-          //         let a_price =[]
-          //         let kkk= response.data[j][0].cid
-          //         for(var k= 0 ;k<j.length;k++){
-          //           console.log(response.data[j][k].clPrice)
-          //           a_price.push( response.data[j][k].clPrice)
-          //         }
-          //         alert(a_price)
-          //         var objproject = {
-          //           name :  kkk,
-          //           type:'line',
-          //           stack: '总量',
-          //           data: a_price
-          //
-          //       }
-          //         datavue.push(objproject);
-          //       }
-          //
-          //       console.log(datavue)
-          //       //this.objproject = datavue
-          //       //填入数据
-          //       // myChart.setOption({
-          //       //   xAxis: {
-          //       //     data: arr_date
-          //       //   },
-          //       //   series: [datavue]
-          //       // });
-          //       // this.hello = response.data.content.test
-          //       // this.MESS = response.data.content.passsss
-          //       // this.pass = response.data.content.nasme
-          //     })
-          // } else {
-          //   this.$message({
-          //     showClose: true,
-          //     message: '用户未登录，请登录后再进行查看',
-          //     type: 'error'
-          //   });
-          // }
+
         }
     }
   }
