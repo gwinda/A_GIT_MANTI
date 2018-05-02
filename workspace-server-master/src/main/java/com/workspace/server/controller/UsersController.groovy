@@ -207,6 +207,7 @@ public class UsersController {
     @RequestMapping("api/feedbackMsgToSystem") //用户信息反馈信息插入
     public String feedbackMsg(@RequestBody UserfeedbackEntity inputParamer, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter ) {
         def uid = inputParamer.getuId()
+        println inputParamer.getUserContent()
         def jsonOutput = new JsonOutput()
         def result =null
         try {

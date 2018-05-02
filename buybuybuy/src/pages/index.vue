@@ -65,7 +65,7 @@
                  </el-menu-item>
                  <el-menu-item index="3">
                    <i class="el-icon-edit-outline"></i>
-                   <span slot="title">已订阅商品管理</span>
+                   <span slot="title" @click="togoodsManageContent">已订阅商品管理</span>
                  </el-menu-item>
                  <el-menu-item index="4">
                    <i class="el-icon-service"></i>
@@ -73,7 +73,7 @@
                  </el-menu-item>
                  <el-menu-item index="3" disabled>
                    <i class="el-icon-document"></i>
-                   <span slot="title">已订阅商品管理</span>
+                   <span slot="title"  >已订阅商品管理</span>
                  </el-menu-item>
                  <el-menu-item index="5">
                    <i class="el-icon-message"></i>
@@ -144,25 +144,28 @@
                        </div>
                        <!--End 个人已订阅商品信息-->
                        <!--个人账号信息查询界面-->
-                       <div v-show="MyContentMsg">
-                         <el-container style=" height:400px ; width:100%;">
-                           <el-main style="height:200px ;width:100%;;background-color: white;">
-                             <div v-if="objproject">
+                       <div v-show="MyContentMsg"  style=" height:300px;background:rgba(171, 119, 157, 0.27);">
+                         <el-container style=" height:200px ; width:80%;">
+                           <el-main style="width:80%; padding-left: 20%">
+                             <div v-if="objproject" style="color:white;font-family:SimHei; text-align: left;">
                              我的ID:{{objproject.uid}}<br/>
                              我的账号：{{objproject.uNumber}}<br/>
                              我的名字：{{objproject.uname}}<br/>
                              </div>
+                             <el-button @click = 'toupdatePWDContent' >修改密码</el-button>
                            </el-main>
                          </el-container>
                        </div>
                        <!--个人账号信息查询 END-->
                        <!--个人密码修改界面-->
                        <div v-show="updatepwdContent">
-                         <el-container style=" height:400px ; width:100%;">
-                           <el-main style="height:200px ;width:100%;;background-color: white;">
-                             旧密码：<el-input v-model="oldPass"></el-input>
-                             新密码：<el-input v-model="newPass"></el-input>
-                             确认新密码：<el-input v-model="newPass2"></el-input>
+                         <el-container style=" height:200px ; width:80%;">
+
+                           <el-main style="height:200px; width:100%;background-color:silver;background:rgba(171, 119, 157, 0.27);border-radius:4px;">
+                             <p style="font-size: larger;font-family: SimSun;font-weight:bold;color:whitesmoke;">修改密码</p>
+                             <el-input v-model="oldPass" placeholder="请输入你的旧密码"></el-input>
+                             <el-input v-model="newPass" placeholder="请输入你的新密码"></el-input>
+                             <el-input v-model="newPass2" placeholder="请再次输入你的新密码"></el-input>
                              <el-button @click="updatePWD">修改</el-button>
                            </el-main>
                          </el-container>
@@ -174,8 +177,40 @@
                        </div>
                        <!--用户反馈界面 END-->
                        <!--已经订阅的商品管理界面-->
-                       <div v-show="goodsManageContent">
-
+                       <div v-show="goodsManageContent" style="width:800px;text-align: center;">
+                         <el-table
+                           ref="multipleTable"
+                           v-loading="loading"
+                           :data="tableData3"
+                           tooltip-effect="dark"
+                           style="width: 100%"
+                           @selection-change="handleSelectionChange">
+                           <el-table-column
+                             type="selection"
+                             width="55">
+                           </el-table-column>
+                           <el-table-column
+                             label="商品ID"
+                             width="70">
+                             <template slot-scope="scope">{{ scope.row.cid}}</template>
+                           </el-table-column>
+                           <el-table-column
+                             label="商品链接"
+                             width="250">
+                             <template slot-scope="scope">{{ scope.row.cLink}}</template>
+                           </el-table-column>
+                           <el-table-column
+                             label="商品名称"
+                             show-overflow-tooltip>
+                             <template slot-scope="scope">{{ scope.row.cName}}</template>
+                           </el-table-column>
+                         </el-table>
+                         <div style="margin-top: 20px">
+                           <!--<el-button @click="toggleSelection([tableData3[1], tableData3[2]])">切换第二、第三行的选中状态</el-button>-->
+                           <el-button @click="toggleSelection()">取消选择</el-button>
+                           <el-button @click="delSelectedGoods">删除选中数据</el-button>
+                           <el-button @click="CompareSelectedGoods">生成对比价格图表</el-button>
+                         </div>
                        </div>
                        <!--已经订阅的商品管理界面 END-->
                      </div>
@@ -197,6 +232,7 @@
                      <el-breadcrumb-item>商品价格走势</el-breadcrumb-item>
                    </el-breadcrumb>
                    <div id="main" style="width: 600px;height: 400px;"></div>
+                   <div id="main2" style="width: 600px;height: 400px;"></div>
                  </div>
                  <!--End 单个商品的价格走势图-->
                </div>
@@ -222,6 +258,7 @@
       name: "index",
       data() {
         return {
+          loading: true,
           hello: '',
           MESS: '',
           pass: '',
@@ -250,7 +287,7 @@
           MyContentMsg:false,
           goodsManageContent:false,
           itemPic:['http://pic1.win4000.com/pic/1/23/1acf1215148.jpg','http://ww4.sinaimg.cn/bmiddle/865cea84gw1erfi2ormusg20c806sx6p.jpg','http://ww2.sinaimg.cn/large/6d1a569dtw1eftwwwdgx5g20dw06ygz4.gif','http://img3.100bt.com/upload/ttq/20130915/1379247772938_middle.gif'],
-
+          tableData3:[],
           tableData: [{
             date: '2016-05-02',
             name: '王小虎',
@@ -467,9 +504,14 @@
         });
       },
       seemyGoods() { //查看已登录用户的所有商品
-        this.zhuye=false
-        this.updatepwdContent = false
-        this.FindOneLog = false
+        this.existgood = false //搜索商品结果界面
+        this.selfGoodsLook =false //所有已经订阅的商品结果界面
+        this.MyContentMsg =false //我的个人信息界面
+        this.updatepwdContent =false  //修改密码界面
+        this.tofeedback =false //用户反馈界面
+        this.goodsManageContent = false //商品管理界面
+        this.FindOneLog = false//商品价格记录
+        this.zhuye= false //主图走马灯
         if (this.user_id) {
           let that = this
           this.$axios.post('https://localhost:888/api/SearchSelfGoods', {
@@ -524,7 +566,7 @@
             }).then(({ value }) => {
               this.$axios.post('https://localhost:888/api/feedbackMsgToSystem', {
                 uId: this.user_id,
-                userContent: this.userContent,
+                userContent: value,
 
               })
                 .then((response) => {
@@ -550,6 +592,7 @@
 
 
         },
+
       FindOneGoodLog(value3) { //查看某一商品的价格走势图
         var myChart = echarts.init(document.getElementById('main'));
         // 显示标题，图例和空的坐标轴
@@ -618,11 +661,206 @@
           });
         }
       },
+
         goToindex(){
           this.$router.push('/');
+        },
+        //关于管理已订阅商品的方法
+        toggleSelection(rows) {
+          if (rows) {
+            rows.forEach(row => {
+              this.$refs.multipleTable.toggleRowSelection(row);
+            });
+          } else {
+            this.$refs.multipleTable.clearSelection();
+          }
+        },
+        handleSelectionChange(val) {
+          this.multipleSelection = val;
+        },
+        togoodsManageContent(){ //转到商品管理界面
+          this.existgood = false //搜索商品结果界面
+          this.selfGoodsLook =false //所有已经订阅的商品结果界面
+          this.MyContentMsg =false //我的个人信息界面
+          this.updatepwdContent =false  //修改密码界面
+          this.FindOneLog = false//商品价格记录
+          this.zhuye= false //主图走马灯
+          this.tofeedback = false
+          if (this.user_id) {
+            let that = this
+            this.$axios.post('https://localhost:888/api/SearchSelfGoodsNoPage', {
+              uid: this.user_id,
+            })
+              .then((response) => {
+                this.loading = false
+                this.goodsManageContent = true //商品管理界面
+                console.log(response.data.CommoditiesEntitys)
+                this.tableData3 = response.data.CommoditiesEntitys
+                //alert(response.data.listcounts)
+                //alert( this.listcount)
+              })
+          } else {
+            this.$message({
+              showClose: true,
+              message: '用户未登录，请登录后再进行订阅',
+              type: 'error'
+            });
+          }
+
+        },
+        delSelectedGoods(){
+          console.log(this.multipleSelection)
+          if (this.user_id) {
+            this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              let that = this
+              this.$axios.post('https://localhost:888/api/delGoods', this.multipleSelection
+              ).then((response) => {
+                  console.log(response.data.content.outputMess)
+                  this.$message({
+                    showClose: true,
+                    message: response.data.content.outputMess,
+                    type: 'info'
+                  });
+
+                  this.togoodsManageContent()
+                })
+            }).catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消删除'
+              });
+            });
+          }else{
+              this.$message({
+                showClose: true,
+                message: '用户未登录，请登录后再进行订阅',
+                type: 'error'
+              });
+            }
+        },
+        CompareSelectedGoods(){
+          console.log(this.multipleSelection)
+          var myChart = echarts.init(document.getElementById('main2'));
+          // 显示标题，图例和空的坐标轴
+          myChart.option = {
+            title: {
+              text: '折线图堆叠'
+            },
+            tooltip: {
+              trigger: 'axis'
+            },
+            legend: {
+              data:['邮件营销','联盟广告','视频广告','直接访问','搜索引擎']
+            },
+            grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
+            },
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              }
+            },
+            xAxis: {
+              type: 'category',
+              boundaryGap: false,
+              data: ['周一','周二','周三','周四','周五','周六','周日']
+            },
+            yAxis: {
+              type: 'value'
+            },
+            series: [
+              {
+                name:'邮件营销',
+                type:'line',
+                stack: '总量',
+                data:[120, 132, 101, 134, 90, 230, 210]
+              },
+              {
+                name:'联盟广告',
+                type:'line',
+                stack: '总量',
+                data:[220, 182, 191, 234, 290, 330, 310]
+              },
+              {
+                name:'视频广告',
+                type:'line',
+                stack: '总量',
+                data:[150, 232, 201, 154, 190, 330, 410]
+              },
+              {
+                name:'直接访问',
+                type:'line',
+                stack: '总量',
+                data:[320, 332, 301, 334, 390, 330, 320]
+              },
+              {
+                name:'搜索引擎',
+                type:'line',
+                stack: '总量',
+                data:[820, 932, 901, 934, 1290, 1330, 1320]
+              }
+            ]
+          };
+
+
+          // if (this.user_id) {
+          //   let that = this
+          //   this.$axios.post('https://localhost:888/goodsLog/CompareGoodsPriceLog', this.multipleSelection)
+          //     .then((response) => {
+          //       console.log(response.data)
+          //       this.existgood = false
+          //       this.selfGoodsLook = false
+          //       let arr_price = [];
+          //       let arr_date = [];
+          //       let datavue=[]
+          //       for (var j = 0; j < response.data.length; j++) {//json类似一个数组，所以通过循环输出里面
+          //         let a_price =[]
+          //         let kkk= response.data[j][0].cid
+          //         for(var k= 0 ;k<j.length;k++){
+          //           console.log(response.data[j][k].clPrice)
+          //           a_price.push( response.data[j][k].clPrice)
+          //         }
+          //         alert(a_price)
+          //         var objproject = {
+          //           name :  kkk,
+          //           type:'line',
+          //           stack: '总量',
+          //           data: a_price
+          //
+          //       }
+          //         datavue.push(objproject);
+          //       }
+          //
+          //       console.log(datavue)
+          //       //this.objproject = datavue
+          //       //填入数据
+          //       // myChart.setOption({
+          //       //   xAxis: {
+          //       //     data: arr_date
+          //       //   },
+          //       //   series: [datavue]
+          //       // });
+          //       // this.hello = response.data.content.test
+          //       // this.MESS = response.data.content.passsss
+          //       // this.pass = response.data.content.nasme
+          //     })
+          // } else {
+          //   this.$message({
+          //     showClose: true,
+          //     message: '用户未登录，请登录后再进行查看',
+          //     type: 'error'
+          //   });
+          // }
         }
     }
-    }
+  }
 
 </script>
 

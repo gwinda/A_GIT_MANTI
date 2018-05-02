@@ -130,6 +130,8 @@ class UsersCommodiesController {
         def input= InputSearch.getUid()
         def jsonOutput = new JsonOutput()
         def result = null
+        def map =[:]
+        def mmm=[]
         List<CommoditiesEntity> List = new ArrayList<CommoditiesEntity>()
         if(input!= ''){
             //查找所有该用户已经订阅的商品 ,并查询到商品的具体信息（CommoditiesEntity）
@@ -138,11 +140,31 @@ class UsersCommodiesController {
                 usersGoodsByUID?.each{current_Goods->
                     CommoditiesEntity out = goodsService.findCommoditiesEntityBycid(current_Goods.getcId())
                     if(out != null) {
+                        //map[current_Goods.getUcId()]= out //.put(current_Goods.getUcId())
                         List.add(out)
+                        mmm.add(current_Goods.getUcId())
                     }
                 }
             }
-            result = jsonOutput.toJson(List)
+            map.each{
+                println it?.key
+                println it?.value
+            }
+            def i = 0
+           ((JsonBuilder) contentFormatter.content()) {
+                'CommoditiesEntitys' List, { CommoditiesEntity commoditiesEntity ->
+                    'ucId' mmm[i]
+                    'cid' commoditiesEntity.cid
+                    'cPicture' commoditiesEntity.cPicture
+                    'cLink'  commoditiesEntity.cLink
+                    'cName'  commoditiesEntity.cName
+                    'cLowestPrice'  commoditiesEntity.cLowestPrice
+                    i++
+                }
+                //'listcounts' listcount
+            }
+            println  contentFormatter.content()
+            result = contentFormatter.content()//jsonOutput.toJson(List)
         }else{
             result = jsonOutput.toJson("{'result':'用户未登录，请登录再进行订阅'}")
         }
@@ -150,8 +172,8 @@ class UsersCommodiesController {
     }
 
     @ResponseBody
-    @RequestMapping("/api/delGoods") //已经登陆的用户查看所有的已订阅商品(不分页，用来管理数据)
-    String delSelfGoods(@RequestBody UsercommoditylogEntity InputSearch, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter) {
+    @RequestMapping("/api/deloneGood") //已经登陆的用户查看所有的已订阅商品(不分页，用来管理数据,删除单个)
+    String delSelfOneGood(@RequestBody UsercommoditylogEntity InputSearch, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter) {
         def input= InputSearch.getUcId()
         if(input!= ''){
             def delResult=commDao.delete(input);
@@ -167,6 +189,34 @@ class UsersCommodiesController {
         }else{
             contentFormatter.content().'content' {
                 'outputMess' '用户未登录，请登录再进行订阅'
+            }
+        }
+        return contentFormatter.toString()
+    }
+
+    @ResponseBody
+    @RequestMapping("/api/delGoods") //已经登陆的用户查看所有的已订阅商品(不分页，用来管理数据,同时删除多条记录)
+    String delSelfGoods(@RequestBody List<UsercommoditylogEntity> InputSearchList, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter) {
+        try{
+            if(InputSearchList!= null) {
+                    InputSearchList?.each { current_comm ->
+                        println current_comm?.getUcId()
+                        if (current_comm?.getUcId() != 0) {
+                            def delResult = commDao.delete(current_comm?.getUcId());
+                            contentFormatter.content().'content' {
+                                'outputMess' '成功删除选中数据'
+                            }
+                        }
+                }
+            }else{
+                contentFormatter.content().'content' {
+                    'outputMess' '未选择数据，请重试'
+                }
+            }
+        }catch (Exception ex){
+            ex.printStackTrace()
+            contentFormatter.content().'content' {
+                'outputMess' '系统出错，请重试'
             }
         }
         return contentFormatter.toString()

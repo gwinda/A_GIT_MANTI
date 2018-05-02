@@ -3,6 +3,7 @@ package com.workspace.server.service
 import com.workspace.server.dao.UserfeedbackEntityDao
 import com.workspace.server.dao.UsersEntityDao
 import com.workspace.server.model.UserEntity
+import com.workspace.server.model.UserfeedbackEntity
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -16,10 +17,10 @@ class UserfeedbackEntityService {
 
     @Autowired UserfeedbackEntityDao userfeedbackEntityDao
 
-    List<UserEntity> findUserfeedbackEntityByuId (int  uid) {
+    List<UserfeedbackEntity> findUserfeedbackEntityByuId (int  uid) {
         return userfeedbackEntityDao.findUserfeedbackEntityByuId(uid)
     }
-    UserEntity findUserfeedbackEntityByufId(int UFId) {
+    UserfeedbackEntity findUserfeedbackEntityByufId(int UFId) {
         return userfeedbackEntityDao.findUserfeedbackEntityByufId(UFId)
     }
 
