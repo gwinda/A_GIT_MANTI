@@ -140,19 +140,24 @@ public class UsersController {
         try {
             if (usersService.existUid(uid)) {
                 UsersEntity  userMess = usersService.findUsersEntityByuid(uid)
-                def UName= userMess.getUname()
-                UsersEntity Users = new UsersEntity()
-                Users.setUid(uid)
-                Users.setuNumber(userMess.getuNumber())
-                Users.setUname(UName)
-                Users.setuPassWord(passwordsignup)
-                def resll = userDao.save(Users)
-                if(resll){
+                if(userMess.getuPassWord()==passwordsignup){
+                    def UName= userMess.getUname()
+                    UsersEntity Users = new UsersEntity()
+                    Users.setUid(uid)
+                    Users.setuNumber(userMess.getuNumber())
+                    Users.setUname(UName)
+                    Users.setuPassWord(passwordsignup)
+                    def res = userDao.save(Users)
+                    if(res){
+                        contentFormatter.content().'content' {
+                            'outputMess' '修改成功，请重新登录'
+                        }
+                    }
+                }else{
                     contentFormatter.content().'content' {
-                        'outputMess' '修改成功，请重新登录'
+                        'outputMess' '旧密码错误，修改失败'
                     }
                 }
-
                 //return 'loginOrReg.html'
             }else{
                 contentFormatter.content().'content' {

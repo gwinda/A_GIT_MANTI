@@ -163,9 +163,9 @@
 
                            <el-main style="height:200px; width:100%;background-color:silver;background:rgba(171, 119, 157, 0.27);border-radius:4px;">
                              <p style="font-size: larger;font-family: SimSun;font-weight:bold;color:whitesmoke;">修改密码</p>
-                             <el-input v-model="oldPass" placeholder="请输入你的旧密码"></el-input>
-                             <el-input v-model="newPass" placeholder="请输入你的新密码"></el-input>
-                             <el-input v-model="newPass2" placeholder="请再次输入你的新密码"></el-input>
+                             <el-input type="password" v-model="oldPass" placeholder="请输入你的旧密码"></el-input>
+                             <el-input type="password" v-model="newPass" placeholder="请输入你的新密码"></el-input>
+                             <el-input type="password" v-model="newPass2" placeholder="请再次输入你的新密码"></el-input>
                              <el-button @click="updatePWD">修改</el-button>
                            </el-main>
                          </el-container>
@@ -210,9 +210,12 @@
                            <el-button @click="toggleSelection()">取消选择</el-button>
                            <el-button @click="delSelectedGoods">删除选中数据</el-button>
                            <el-button @click="CompareSelectedGoods">生成对比价格图表</el-button>
+                           <el-button @click="downloadSelectedGoods">下载选择数据</el-button>
                          </div>
+                         <div id="main2" style="width: 600px;height: 400px;"></div>
                        </div>
                        <!--已经订阅的商品管理界面 END-->
+
                      </div>
                    </el-col>
                  </el-row>
@@ -232,7 +235,7 @@
                      <el-breadcrumb-item>商品价格走势</el-breadcrumb-item>
                    </el-breadcrumb>
                    <div id="main" style="width: 600px;height: 400px;"></div>
-                   <div id="main2" style="width: 600px;height: 400px;"></div>
+
                  </div>
 
                  <!--End 单个商品的价格走势图-->
@@ -460,7 +463,8 @@
         this.username = ''
         this.$message({
           showClose: true,
-          message: '账号已成功注销'
+          message: '账号已注销,请重新登录',
+          type: 'success'
         });
         this.$router.push('/')
       },
@@ -485,6 +489,22 @@
               uPassWord: this.newPass,
             })
               .then((response) => {
+                if(response.data.content.outputMess ==='修改成功，请重新登录'){
+                  alert(response.data.content.outputMess)
+                  // this.$notify({
+                  //   title: '成功',
+                  //   message: '修改成功，请重新登录',
+                  //   type: 'success'
+                  // });
+                  this.sleep(2000)
+                  this.signOut()
+                }else{
+                  this.$message({
+                    showClose: true,
+                    message: response.data.content.outputMess,
+                    type: 'error'
+                  });
+                }
                 console.log(response.data.content)
               })
           }
@@ -744,16 +764,14 @@
             }
         },
         CompareSelectedGoods(){
+          var myChart2 = echarts.init(document.getElementById('main2'));
+          myChart2.clear() //清除表中数据
           this.selfGoodsLook =false //所有已经订阅的商品结果界面
           this.MyContentMsg =false //我的个人信息界面
           this.updatepwdContent =false  //修改密码界面
           this.tofeedback =false //用户反馈界面
-          this.goodsManageContent = false //商品管理界面
-          this.FindOneLog = true//商品价格记录
-          this.zhuye= false
-          alert("sss")
-          console.log(this.multipleSelection)
-          var myChart2 = echarts.init(document.getElementById('main2'));
+          this.zhuye= false //走马灯界面
+          if(this.multipleSelection !==undefined &&this.multipleSelection.length !== 0){
           // 显示标题，图例和空的坐标轴
           var Option = {
             title: {
@@ -768,7 +786,7 @@
             grid: {
               left: '3%',
               right: '4%',
-              bottom: '3%',
+              bottom: '5%',
               containLabel: true
             },
             toolbox: {
@@ -793,32 +811,38 @@
                 console.log(response.data)
                 this.existgood = false
                 this.selfGoodsLook = false
-                let arr = [];
+                let arr_nameList = [];
                 let arr_date = [];
                 let datavue=[]
-                for (var j = 0; j < response.data.length; j++) {//json类似一个数组，所以通过循环输出里面
+                for (let j = 0; j < response.data.length; j++) {//json类似一个数组，所以通过循环输出里面
                   let a_price =[]
-                  let kkk= response.data[j][0].cid
-                  arr.push(kkk)
-                  for(var k= 0 ;k<response.data[j].length;k++){
+                  let arr_name= ""+response.data[j][0].cid
+                  arr_nameList.push(arr_name)
+                  for(let k= 0 ;k<response.data[j].length;k++){
                     a_price.push( response.data[j][k].clPrice)
-                    arr_date.push(response.data[j][k].clDateTime)
+                    if(j===0){
+                      arr_date.push(response.data[0][k].clDateTime.substring(0, 10))
+                    }
                   }
-                  var objproject = {
-                    name :  kkk,
+                  let objproject = {
+                    name :  arr_name,
                     type:'line',
-                    stack: '总量',
-                    data: a_price
-
+                    stack: '实时价格',
+                    data: a_price,
+                    label: { //折线上显示价格
+                      normal: {
+                        show: true,
+                      }
+                    }
                   }
                   datavue.push(objproject);
                 }
                 myChart2.setOption({
                   legend: {
-                    data:arr,
+                    data:arr_nameList, //种类
                   },
                   xAxis: {
-                    data: arr_date
+                    data: arr_date //X 轴数据显示
                   },
                   series: datavue
                 });
@@ -832,11 +856,44 @@
           }
 
           myChart2.setOption(Option);
-
-
+        }else{
+            this.$message({
+              showClose: true,
+              message: '未选择数据',
+              type: 'error'
+            });
+          }
+        },
+        sleep(numberMillis) {
+          var now = new Date();
+          var exitTime = now.getTime() + numberMillis;
+          while (true) {
+            now = new Date();
+            if (now.getTime() > exitTime)
+              return;
+          }
+        },
+        downloadSelectedGoods(){
+          this.$prompt('文件将存到(置空为默认--D:\\temp\\result.csv):', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+          }).then(({ value }) => {
+            this.$axios.post('https://localhost:888/goodsLog/DownloadGoodsResult', this.multipleSelection)
+              .then((response) => {
+                console.log(response.data)
+                this.existgood = false
+                this.selfGoodsLook = false
+                alert('请到目录下进行查看')
+              });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '取消输入'
+            });
+          });
 
         }
-    }
+      }
   }
 
 </script>
