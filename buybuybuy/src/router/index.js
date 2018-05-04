@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 import Index from '../pages/index.vue'
 import login from '../login/login'
-
+import manage from '../manage/manage'
 Vue.use(Router);
 
 export default new Router({
@@ -17,6 +17,11 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: login
+    },
+    {
+      path: '/manage',
+      name: 'manage',
+      component: manage
     }
   ]
 })

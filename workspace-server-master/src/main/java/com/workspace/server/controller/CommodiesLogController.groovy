@@ -10,6 +10,10 @@ import com.workspace.server.service.CommditiesLogEntityService
 import com.workspace.server.util.ContentFormatter
 import groovy.json.JsonOutput
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.io.FileSystemResource
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -88,34 +92,55 @@ class CommodiesLogController {
     }
 
 
-    @ResponseBody
+    //@ResponseBody
     @RequestMapping("/goodsLog/DownloadGoodsResult") //将所有已经收藏或已经选择的商品导出
-    String DownloadGoodsResultViaAjax(@RequestBody List<CommoditiesEntity> InputSearchList, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter) {
+    ResponseEntity<FileSystemResource> DownloadGoodsResultViaAjax(@RequestBody List<CommoditiesEntity> InputSearchList, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter) {
         //先遍历传进来的数据，获取每个对应的价格与CID 存到 map 中
         List<CommoditiesEntity> list =new ArrayList<CommoditiesEntity>()
         InputSearchList.each{ current_Comm->
             def cid = current_Comm?.getCid()
             def output = CommditiesEntityService.findCommoditiesEntityBycid(cid)
             list.add(output)
-
         }
-        writeCSV(list,"")
-        return null
+        def dir_file=writeCSV(list,"")
+        return  export(new File(dir_file))
+    }
+    //封装返回文件流的方法
+    ResponseEntity<FileSystemResource> export(File file) {
+        if (file == null) {
+            return null;
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Content-Disposition", "attachment; filename=" + System.currentTimeMillis() + ".csv");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+        headers.add("Last-Modified", new Date().toString());
+        headers.add("ETag", String.valueOf(System.currentTimeMillis()));
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentLength(file.length())
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .body(new FileSystemResource(file));
     }
 
 
 
-
     //save data to CSV File
-    public void  writeCSV(List<CommoditiesEntity> list,String dir) {
+    public String  writeCSV(List<CommoditiesEntity> list,String dir) {
+        def DIR = ''
         try {
             FileWriter fw =null
             List li=new ArrayList();
             def dd = GenRandomForTransID()
             println dd
             if(dir!=''){
+                DIR = dir+"\\result-"+dd+".csv"
                 fw =new FileWriter(dir+"\\result-"+dd+".csv");
             }else{
+                DIR = "D:\\temp\\result-"+dd+".csv"
                 fw =new FileWriter("D:\\temp\\result-"+dd+".csv");
             }
             String header = "商品ID,商品名成称,商品链接,商品价格，商品主图链接\r\n";
@@ -138,6 +163,7 @@ class CommodiesLogController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return DIR
     }
     public static String GenRandomForTransID() {
         try {

@@ -188,7 +188,7 @@
                            <el-table-column
                              type="selection"
                              width="55">
-                           </el-table-column>
+                           </el-table-column>handleSelectionChange
                            <el-table-column
                              label="商品ID"
                              width="70">
@@ -249,7 +249,7 @@
        </el-container>
      </el-container>
      <div class="footer">
-       <label>该系统最终解释权归BuyBuyBuy所有，侵权必究</label>
+       <label>该系统最终解释权归BuyBuyBuy所有，侵权必究<span @click="toManage">管理</span></label>
      </div>
    </div>
 
@@ -873,24 +873,38 @@
               return;
           }
         },
+        toManage(){
+          this.$router.push('/manage');
+        },
         downloadSelectedGoods(){
-          this.$prompt('文件将存到(置空为默认--D:\\temp\\result.csv):', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-          }).then(({ value }) => {
-            this.$axios.post('https://localhost:888/goodsLog/DownloadGoodsResult', this.multipleSelection)
-              .then((response) => {
-                console.log(response.data)
-                this.existgood = false
-                this.selfGoodsLook = false
-                alert('请到目录下进行查看')
-              });
-          }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: '取消输入'
+
+          this.$axios.post('https://localhost:888/goodsLog/DownloadGoodsResult', {data:this.multipleSelection, responseType: 'blob' })
+            .then((response) => {
+              //console.log(response.data)
+              /// this.existgood = false
+              // this.selfGoodsLook = false
+              //alert('请到目录下进行查看')
             });
-          });
+          // this.$prompt('文件将存到(置空为默认--D:\\temp\\result.csv):', '提示', {
+          //   confirmButtonText: '确定',
+          //   cancelButtonText: '取消',
+          //
+          // }
+          //
+          // ).then(({ value }) => {
+          //   this.$axios.post('https://localhost:888/goodsLog/DownloadGoodsResult', {data:this.multipleSelection, responseType: 'blob' })
+          //     .then((response) => {
+          //       //console.log(response.data)
+          //      /// this.existgood = false
+          //      // this.selfGoodsLook = false
+          //       //alert('请到目录下进行查看')
+          //     });
+          // }).catch(() => {
+          //   this.$message({
+          //     type: 'info',
+          //     message: '取消输入'
+          //   });
+          // });
 
         }
       }
