@@ -11,6 +11,7 @@ import com.workspace.server.util.ContentFormatter
 import groovy.json.JsonOutput
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.FileSystemResource
+import org.springframework.core.io.InputStreamResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -93,8 +94,42 @@ class CommodiesLogController {
 
 
     //@ResponseBody
-    @RequestMapping("/goodsLog/DownloadGoodsResult") //将所有已经收藏或已经选择的商品导出
-    ResponseEntity<FileSystemResource> DownloadGoodsResultViaAjax(@RequestBody List<CommoditiesEntity> InputSearchList, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter) {
+//    @RequestMapping("/goodsLog/DownloadGoodsResult") //将所有已经收藏或已经选择的商品导出
+//    ResponseEntity<FileSystemResource> DownloadGoodsResultViaAjax(@RequestBody List<CommoditiesEntity> InputSearchList, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter) {
+//        //先遍历传进来的数据，获取每个对应的价格与CID 存到 map 中
+//        List<CommoditiesEntity> list =new ArrayList<CommoditiesEntity>()
+//        InputSearchList.each{ current_Comm->
+//            def cid = current_Comm?.getCid()
+//            def output = CommditiesEntityService.findCommoditiesEntityBycid(cid)
+//            list.add(output)
+//        }
+//        def dir_file=writeCSV(list,"")
+//        return  export(new File(dir_file))
+//    }
+//    //封装返回文件流的方法
+//    ResponseEntity<InputStreamResource> export(File file) {
+//        if (file == null) {
+//            return null;
+//        }
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+//        headers.add("Content-Disposition", "attachment; filename=" + System.currentTimeMillis() + ".csv");
+//        headers.add("Pragma", "no-cache");
+//        headers.add("Expires", "0");
+//        headers.add("Last-Modified", new Date().toString());
+//        headers.add("ETag", String.valueOf(System.currentTimeMillis()));
+//
+//        return ResponseEntity
+//                .ok()
+//                .headers(headers)
+//                .contentLength(file.length())
+//                .contentType(MediaType.parseMediaType("application/octet-stream"))
+//                .body(new FileSystemResource(file));
+//    }
+
+    @RequestMapping('/goodsLog/DownloadGoodsResult')
+    ResponseEntity<InputStreamResource> getSource (@RequestBody List<CommoditiesEntity> InputSearchList) {
+
         //先遍历传进来的数据，获取每个对应的价格与CID 存到 map 中
         List<CommoditiesEntity> list =new ArrayList<CommoditiesEntity>()
         InputSearchList.each{ current_Comm->
@@ -102,34 +137,26 @@ class CommodiesLogController {
             def output = CommditiesEntityService.findCommoditiesEntityBycid(cid)
             list.add(output)
         }
-        def dir_file=writeCSV(list,"")
-        return  export(new File(dir_file))
-    }
-    //封装返回文件流的方法
-    ResponseEntity<FileSystemResource> export(File file) {
-        if (file == null) {
-            return null;
-        }
+
+        File outputFile = new File(writeCSV(list,""))
+        String filePath = outputFile.getAbsolutePath()
+        FileSystemResource file = new FileSystemResource(filePath);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        headers.add("Content-Disposition", "attachment; filename=" + System.currentTimeMillis() + ".csv");
+        headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", outputFile.getName()));
         headers.add("Pragma", "no-cache");
         headers.add("Expires", "0");
-        headers.add("Last-Modified", new Date().toString());
-        headers.add("ETag", String.valueOf(System.currentTimeMillis()));
 
         return ResponseEntity
                 .ok()
                 .headers(headers)
-                .contentLength(file.length())
+                .contentLength(file.contentLength())
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(new FileSystemResource(file));
+                .body(new InputStreamResource(file.getInputStream()));
     }
 
-
-
     //save data to CSV File
-    public String  writeCSV(List<CommoditiesEntity> list,String dir) {
+    public String writeCSV(List<CommoditiesEntity> list,String dir) {
         def DIR = ''
         try {
             FileWriter fw =null

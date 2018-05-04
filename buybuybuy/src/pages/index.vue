@@ -878,13 +878,35 @@
         },
         downloadSelectedGoods(){
 
-          this.$axios.post('https://localhost:888/goodsLog/DownloadGoodsResult', {data:this.multipleSelection, responseType: 'blob' })
-            .then((response) => {
-              //console.log(response.data)
-              /// this.existgood = false
-              // this.selfGoodsLook = false
-              //alert('请到目录下进行查看')
-            });
+          this.$axios({
+            url: 'https://localhost:888/goodsLog/DownloadGoodsResult',
+            method: 'post',
+            responseType: 'blob',
+            data: this.multipleSelection
+          }).then((res) => {
+            const content = res
+            const blob = new Blob([content])
+            const fileName = '测试表格123.xls'
+            if ('download' in document.createElement('a')) { // 非IE下载
+              const elink = document.createElement('a')
+              elink.download = fileName
+              elink.style.display = 'none'
+              elink.href = URL.createObjectURL(blob)
+              document.body.appendChild(elink)
+              elink.click()
+              URL.revokeObjectURL(elink.href) // 释放URL 对象
+              document.body.removeChild(elink)
+            } else { // IE10+下载
+              navigator.msSaveBlob(blob, fileName)
+            }
+          })
+          // this.$axios.post('https://localhost:888/goodsLog/DownloadGoodsResult', this.multipleSelection)
+          //   .then((response) => {
+          //     console.log(response)
+          //     /// this.existgood = false
+          //     // this.selfGoodsLook = false
+          //     //alert('请到目录下进行查看')
+          //   });
           // this.$prompt('文件将存到(置空为默认--D:\\temp\\result.csv):', '提示', {
           //   confirmButtonText: '确定',
           //   cancelButtonText: '取消',
