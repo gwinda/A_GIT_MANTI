@@ -16,14 +16,17 @@ class CommditiesEntityService { //商品记录
     @Autowired CommoditiesEntityDao CommEntityDao
 
     List<CommoditiesEntity> findCommoditiesEntityByCLink (String CLink) {
-        return CommEntityDao.findCommoditiesEntityByCLink(CLink)
+        return CommEntityDao.findCommoditiesEntityBycLink(CLink)
     }
     CommoditiesEntity findCommoditiesEntityBycid(int cid) {
         return CommEntityDao.findCommoditiesEntityBycid(cid)
     }
+    List<CommoditiesEntity> findCommoditiesEntityBycNameContaining( String cName){
+        return CommEntityDao.findCommoditiesEntityBycNameContaining(cName)
+    }
 
    boolean exists (String CLink) {
-       def list_size=  CommEntityDao.findCommoditiesEntityByCLink(CLink).size()
+       def list_size=  CommEntityDao.findCommoditiesEntityBycLink(CLink).size()
        return list_size != 0
    }
 

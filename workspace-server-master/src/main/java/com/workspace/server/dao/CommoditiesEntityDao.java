@@ -12,9 +12,9 @@ import java.util.List;
 @Repository
 public interface CommoditiesEntityDao extends JpaRepository<CommoditiesEntity, Long> {
 
-    List<CommoditiesEntity> findCommoditiesEntityByCLink(String CLink);
+    List<CommoditiesEntity> findCommoditiesEntityBycLink(String CLink);
     CommoditiesEntity findCommoditiesEntityBycid(int cid);
-
+    List<CommoditiesEntity> findCommoditiesEntityBycNameContaining( String cName);
 
 
 }

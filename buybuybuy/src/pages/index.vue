@@ -1,7 +1,7 @@
 <template>
   <div id="index" style="margin:-8px">
    <div class="top_SYSTEM">
-    <div class = 'title_header'> 商品监测对比系统</div>
+    <div > <h1 class = 'title_header'>商品监测对比系统</h1></div>
      <!--<div id="main" style="width: 600px;height: 400px;"></div>-->
      <el-container>
        <el-header>
@@ -9,24 +9,12 @@
                   :default-active="activeIndex2"
                   class="el-menu-demo"
                   mode="horizontal"
-                  background-color="#545c64"
+                  background-color=""
                   text-color="#fff"
                   active-text-color="#ffd04b">
            <el-menu-item index="1" @click="goToindex" >首页</el-menu-item>
-           <el-submenu index="2">
-             <template slot="title">我的工作台</template>
-             <el-menu-item index="2-1">选项1</el-menu-item>
-             <el-menu-item index="2-2">选项2</el-menu-item>
-             <el-menu-item index="2-3">选项3</el-menu-item>
-             <el-submenu index="2-4">
-               <template slot="title">选项4</template>
-               <el-menu-item index="2-4-1">选项1</el-menu-item>
-               <el-menu-item index="2-4-2">选项2</el-menu-item>
-               <el-menu-item index="2-4-3">选项3</el-menu-item>
-             </el-submenu>
-           </el-submenu>
-           <el-menu-item index="3" disabled>消息中心</el-menu-item>
-           <el-menu-item index="4" disabled>订单管理</el-menu-item>
+           <el-menu-item index="3" disabled></el-menu-item>
+           <el-menu-item index="4" disabled></el-menu-item>
            <div v-if="user_id">
              <el-submenu index="6"  style="float: right">
                <template slot="title">您好,{{username}}</template>
@@ -884,20 +872,20 @@
             responseType: 'blob',
             data: this.multipleSelection
           }).then((res) => {
-            const content = res
-            const blob = new Blob([content])
-            const fileName = '测试表格123.xls'
+            let resBlob = res.data // <--- store the blob if it is
+            let resData = null
+            const fileName = '测试表格123.csv'
             if ('download' in document.createElement('a')) { // 非IE下载
               const elink = document.createElement('a')
               elink.download = fileName
               elink.style.display = 'none'
-              elink.href = URL.createObjectURL(blob)
+              elink.href = URL.createObjectURL(resBlob)
               document.body.appendChild(elink)
               elink.click()
               URL.revokeObjectURL(elink.href) // 释放URL 对象
               document.body.removeChild(elink)
             } else { // IE10+下载
-              navigator.msSaveBlob(blob, fileName)
+              navigator.msSaveBlob(resBlob, fileName)
             }
           })
           // this.$axios.post('https://localhost:888/goodsLog/DownloadGoodsResult', this.multipleSelection)
@@ -939,6 +927,11 @@
     margin:0;
 
   }
+  .threed{
+    color: #fafafa;
+    letter-spacing: 0;
+    text-shadow: 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135
+  }
   .top_SYSTEM{
     background-image: url("../assets/bg.jpg");
     background-size:100% 100%;
@@ -965,9 +958,9 @@
     text-align: center;
     line-height: 30px;
     color: cadetblue;
-    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-    font-size: larger;
     font-style: italic;
+    letter-spacing: 0;
+    text-shadow: 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135
   }
   .el-header{
     /*background-color: #B3C0D1;*/

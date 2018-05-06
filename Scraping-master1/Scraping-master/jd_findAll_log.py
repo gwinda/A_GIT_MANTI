@@ -87,8 +87,8 @@ class JDMonitoringEngine():
         #print(uid)
         content = self.link_to_url('https://c.3.cn/recommend?&methods=accessories&sku=' + uid + '&cat=9987%2C653%2C655')
         content2 = self.link_to_url(purl)
-        name_re = re.compile(r"name: '(.*?)',")
-        name = re.findall(name_re, content2)[0]
+        name_re = re.compile(r"Name: '(.*?)',")
+        name = ''#re.findall(name_re, content2)[0]
         #print(name)#将其转换为中文
         #print(content)
         try:
@@ -131,7 +131,7 @@ class JDMonitoringEngine():
                 host = '127.0.0.1',  
                 port = 3306,  
                 user = 'root',  
-                password = '',  
+                password = '123456',  
                 db = 'shiro',  
                 charset = 'utf8',  
         )  
@@ -140,7 +140,7 @@ class JDMonitoringEngine():
 	
     def save(self,list):
         cursor = self.conndb()
-        sql1 = "SELECT CId FROM commodities  WHERE CLink = '%s'" % (list[3])
+        sql1 = "SELECT CId FROM commodities  WHERE CLink = '%s'" % (list[2])
         #print(sql1)
         # 执行SQL语句
         cursor.execute(sql1)
@@ -194,10 +194,10 @@ if __name__ == '__main__':
         print(j.getname(url[0]))
         ul.append(j.getname(url[0]))#商品名称
         ul.append(j.getprice(url[0],url[1]))#价格
-        ul.append(j.getseller(url[0]))#店铺
+        #ul.append(j.getseller(url[0]))#店铺
         ul.append(url[0])#链接
         #print('https:' + url)
         #print(j.getprice(url))
         #print(j.getcomment(url))
-        ul.extend(j.getcomment(url[0]))#评论
+        #ul.extend(j.getcomment(url[0]))#评论
         j.save(ul)
