@@ -170,7 +170,7 @@ class CommodiesLogController {
                 DIR = "D:\\temp\\result-"+dd+".csv"
                 fw =new FileWriter("D:\\temp\\result-"+dd+".csv");
             }
-            String header = "商品ID,商品名成称,商品链接,商品价格，商品主图链接\r\n";
+            String header = "商品ID,商品名成称,商品链接,商品价格,商品主图链接\r\n";
             fw.write(header);
             for (CommoditiesEntity Entity :list) {
                 StringBuffer str = new StringBuffer();

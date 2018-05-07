@@ -1,41 +1,70 @@
 <template>
   <div id="index" style="margin:-8px">
    <div class="top_SYSTEM">
-    <div > <h1 class = 'title_header'>商品监测对比系统</h1></div>
-     <!--<div id="main" style="width: 600px;height: 400px;"></div>-->
+     <header class="header" style="width:100%;">
+       <el-row>
+         <el-col :span="24">
+           <el-menu default-active="1"  class="el-menu-demo" mode="horizontal" @select="">
+             <el-menu-item index="1" @click="goToindex">首页</el-menu-item>
+             <el-menu-item index="2">在线商城</el-menu-item>
+             <!--<el-menu-item index="3">客户管理</el-menu-item>-->
+             <!--<el-menu-item index="4">系统设置</el-menu-item>-->
+             <!--<el-menu-item index="5">活动发布</el-menu-item>-->
+             <div v-if="user_id">
+               <el-submenu index="6"  style="float: right">
+                 <template slot="title">您好,{{username}}</template>
+                 <el-menu-item index="6-1"   @click="seemyself">个人信息</el-menu-item>
+                 <el-tooltip content="点击我注销" placement="top">
+                   <el-menu-item index="6-2" :plain="true"  @click="signOut">注销</el-menu-item>
+                 </el-tooltip>
+                 <el-menu-item index="6-3"   @click="regAndLogin">切换账号</el-menu-item>
+               </el-submenu>
+             </div>
+             <div v-else>
+               <el-menu-item index="6" style="float: right"  @click="regAndLogin"> 登录注册 </el-menu-item>
+             </div>
+           </el-menu>
+         </el-col>
+       </el-row>
+     </header>
+    <div > <h1 class = 'title_header'>Commodity Price Monitoring System</h1></div>
+     <!--<div id="main" style="width: 600px;height: 400px;"  商品监测对比系统></div>-->
+
+
      <el-container>
-       <el-header>
-         <el-menu style="width: auto"
-                  :default-active="activeIndex2"
-                  class="el-menu-demo"
-                  mode="horizontal"
-                  background-color=""
-                  text-color="#fff"
-                  active-text-color="#ffd04b">
-           <el-menu-item index="1" @click="goToindex" >首页</el-menu-item>
-           <el-menu-item index="3" disabled></el-menu-item>
-           <el-menu-item index="4" disabled></el-menu-item>
-           <div v-if="user_id">
-             <el-submenu index="6"  style="float: right">
-               <template slot="title">您好,{{username}}</template>
-               <el-menu-item index="6-1"   @click="seemyself">个人信息</el-menu-item>
-               <el-tooltip content="点击我注销" placement="top">
-                  <el-menu-item index="6-2" :plain="true"  @click="signOut">注销</el-menu-item>
-               </el-tooltip>
-               <el-menu-item index="6-3"   @click="regAndLogin">切换账号</el-menu-item>
-             </el-submenu>
-           </div>
-           <div v-else>
-             <el-menu-item index="6" style="float: right"  @click="regAndLogin"> 登录注册 </el-menu-item>
-           </div>
-         </el-menu>
-       </el-header>
+
+       <!--<el-header>-->
+         <!--<el-menu style="width: auto"-->
+                  <!--:default-active="activeIndex2"-->
+                  <!--class="el-menu-demo"-->
+                  <!--mode="horizontal"-->
+                  <!--background-color="#545c64"-->
+                  <!--text-color="#fff"-->
+                  <!--active-text-color="#ffd04b">-->
+           <!--<el-menu-item index="1" @click="goToindex" >首页</el-menu-item>-->
+           <!--<el-menu-item index="3" disabled></el-menu-item>-->
+           <!--<el-menu-item index="4" disabled></el-menu-item>-->
+           <!--<div v-if="user_id">-->
+             <!--<el-submenu index="6"  style="float: right">-->
+               <!--<template slot="title">您好,{{username}}</template>-->
+               <!--<el-menu-item index="6-1"   @click="seemyself">个人信息</el-menu-item>-->
+               <!--<el-tooltip content="点击我注销" placement="top">-->
+                  <!--<el-menu-item index="6-2" :plain="true"  @click="signOut">注销</el-menu-item>-->
+               <!--</el-tooltip>-->
+               <!--<el-menu-item index="6-3"   @click="regAndLogin">切换账号</el-menu-item>-->
+             <!--</el-submenu>-->
+           <!--</div>-->
+           <!--<div v-else>-->
+             <!--<el-menu-item index="6" style="float: right"  @click="regAndLogin"> 登录注册 </el-menu-item>-->
+           <!--</div>-->
+         <!--</el-menu>-->
+       <!--</el-header>-->
        <el-container>
-         <el-aside width="200px" v-show="myselfSee">
-           <el-row class="tac">
+         <el-aside width="200px"  v-show="myselfSee">
+           <el-row class="tac" style="height: 888px;">
              <el-col>
-               <h1>个人信息 <i>{{user_id}}</i></h1>
-               <el-menu  default-active="2" background-color="#545c64" class="el-menu-vertical-demo" active-text-color="#ffd04b" text-color="#fff">
+               <el-menu  default-active="2"  class="el-menu-vertical-demo" active-text-color="#ffd04b" text-color="black">
+                 <h1><i class="el-icon-goods" ></i>{{username}}的个人信息 <i></i></h1>
                  <el-submenu index="1">
                    <template slot="title">
                      <i class="el-icon-menu"></i>
@@ -58,10 +87,6 @@
                  <el-menu-item index="4">
                    <i class="el-icon-service"></i>
                    <span slot="title">联系在线客服</span>
-                 </el-menu-item>
-                 <el-menu-item index="3" disabled>
-                   <i class="el-icon-document"></i>
-                   <span slot="title"  >已订阅商品管理</span>
                  </el-menu-item>
                  <el-menu-item index="5">
                    <i class="el-icon-message"></i>
@@ -90,8 +115,8 @@
                      <div>
                        <!--start 链接搜索结果,返回商品信息-->
                        <div v-show="existgood">
-                         <el-container style=" height:200px ; width:100%;">
-                           <el-aside width="160px" style="height:200px ;background-color: #B3C0D1;line-height: 16px;">
+                         <el-container style=" height:200px ; width:100%; background-color: white;">
+                           <el-aside width="160px" style="height:200px ;line-height: 16px;">
                              <img  v-bind:src="[imgSrc]" style="margin:0; padding:0;height: 197px; width:160px;"/>
                            </el-aside>
                            <el-main style="height:200px ;width:100%;;background-color: white;">
@@ -264,7 +289,7 @@
           imgSrc: '',
           CId: '',
           existgood: false,
-          myselfSee: false,
+          myselfSee: false, //????
           selfGoodsLook: false,
           FindOneLog: false,
           objproject: null,
@@ -314,7 +339,7 @@
             })
         },
         seeMyMsg(){
-          alert(this.user_id)
+          //alert(this.user_id)
           if (this.user_id) {
             this.existgood = false //搜索商品结果界面
             this.selfGoodsLook =false //所有已经订阅的商品结果界面
@@ -719,37 +744,45 @@
         },
         delSelectedGoods(){
           console.log(this.multipleSelection)
-          if (this.user_id) {
-            this.$confirm('此操作将永久删除, 是否继续?', '提示', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning'
-            }).then(() => {
-              let that = this
-              this.$axios.post('https://localhost:888/api/delGoods', this.multipleSelection
-              ).then((response) => {
-                  console.log(response.data.content.outputMess)
-                  this.$message({
-                    showClose: true,
-                    message: response.data.content.outputMess,
-                    type: 'info'
-                  });
+          if(this.multipleSelection !==undefined &&this.multipleSelection.length !== 0){
+            if (this.user_id) {
+              this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(() => {
+                let that = this
+                this.$axios.post('https://localhost:888/api/delGoods', this.multipleSelection
+                ).then((response) => {
+                    console.log(response.data.content.outputMess)
+                    this.$message({
+                      showClose: true,
+                      message: response.data.content.outputMess,
+                      type: 'info'
+                    });
 
-                  this.togoodsManageContent()
-                })
-            }).catch(() => {
-              this.$message({
-                type: 'info',
-                message: '已取消删除'
+                    this.togoodsManageContent()
+                  })
+              }).catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '已取消删除'
+                });
               });
-            });
+            }else{
+                this.$message({
+                  showClose: true,
+                  message: '用户未登录，请登录后再进行订阅',
+                  type: 'error'
+                });
+              }
           }else{
-              this.$message({
-                showClose: true,
-                message: '用户未登录，请登录后再进行订阅',
-                type: 'error'
-              });
-            }
+            this.$message({
+              showClose: true,
+              message: '未选择数据',
+              type: 'error'
+            });
+          }
         },
         CompareSelectedGoods(){
           var myChart2 = echarts.init(document.getElementById('main2'));
@@ -864,58 +897,37 @@
         toManage(){
           this.$router.push('/manage');
         },
-        downloadSelectedGoods(){
-
-          this.$axios({
-            url: 'https://localhost:888/goodsLog/DownloadGoodsResult',
-            method: 'post',
-            responseType: 'blob',
-            data: this.multipleSelection
-          }).then((res) => {
-            let resBlob = res.data // <--- store the blob if it is
-            let resData = null
-            const fileName = '测试表格123.csv'
-            if ('download' in document.createElement('a')) { // 非IE下载
-              const elink = document.createElement('a')
-              elink.download = fileName
-              elink.style.display = 'none'
-              elink.href = URL.createObjectURL(resBlob)
-              document.body.appendChild(elink)
-              elink.click()
-              URL.revokeObjectURL(elink.href) // 释放URL 对象
-              document.body.removeChild(elink)
-            } else { // IE10+下载
-              navigator.msSaveBlob(resBlob, fileName)
-            }
-          })
-          // this.$axios.post('https://localhost:888/goodsLog/DownloadGoodsResult', this.multipleSelection)
-          //   .then((response) => {
-          //     console.log(response)
-          //     /// this.existgood = false
-          //     // this.selfGoodsLook = false
-          //     //alert('请到目录下进行查看')
-          //   });
-          // this.$prompt('文件将存到(置空为默认--D:\\temp\\result.csv):', '提示', {
-          //   confirmButtonText: '确定',
-          //   cancelButtonText: '取消',
-          //
-          // }
-          //
-          // ).then(({ value }) => {
-          //   this.$axios.post('https://localhost:888/goodsLog/DownloadGoodsResult', {data:this.multipleSelection, responseType: 'blob' })
-          //     .then((response) => {
-          //       //console.log(response.data)
-          //      /// this.existgood = false
-          //      // this.selfGoodsLook = false
-          //       //alert('请到目录下进行查看')
-          //     });
-          // }).catch(() => {
-          //   this.$message({
-          //     type: 'info',
-          //     message: '取消输入'
-          //   });
-          // });
-
+        downloadSelectedGoods() {
+          if (this.multipleSelection !== undefined && this.multipleSelection.length !== 0) {
+            this.$axios({
+              url: 'https://localhost:888/goodsLog/DownloadGoodsResult',
+              method: 'post',
+              responseType: 'blob',
+              data: this.multipleSelection
+            }).then((res) => {
+              let resBlob = res.data // <--- store the blob if it is
+              let resData = null
+              const fileName = '测试表格123.csv'
+              if ('download' in document.createElement('a')) { // 非IE下载
+                const elink = document.createElement('a')
+                elink.download = fileName
+                elink.style.display = 'none'
+                elink.href = URL.createObjectURL(resBlob)
+                document.body.appendChild(elink)
+                elink.click()
+                URL.revokeObjectURL(elink.href) // 释放URL 对象
+                document.body.removeChild(elink)
+              } else { // IE10+下载
+                navigator.msSaveBlob(resBlob, fileName)
+              }
+            })
+          }else{
+            this.$message({
+              showClose: true,
+              message: '未选择数据',
+              type: 'error'
+            });
+          }
         }
       }
   }
@@ -927,6 +939,11 @@
     margin:0;
 
   }
+  /* 头部导航 */
+  header{z-index: 500;min-width: 1200px;transition: all 0.5s ease;  background-color:black; box-shadow: 0 2px 4px 0 rgba(0,0,0,.12),0 0 6px 0 rgba(0,0,0,.04); }
+  header .el-{}
+  header.header-fixed{position: fixed;top: 0;left: 0;right: 0;}
+  header .el-menu-demo{padding-left: 300px!important;}
   .threed{
     color: #fafafa;
     letter-spacing: 0;
@@ -957,8 +974,8 @@
     /*background-color: azure;*/
     text-align: center;
     line-height: 30px;
-    color: cadetblue;
-    font-style: italic;
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    color: whitesmoke;
     letter-spacing: 0;
     text-shadow: 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135
   }
@@ -1061,4 +1078,5 @@
     /*filter:blur(1px);*/
 
   }
+
 </style>

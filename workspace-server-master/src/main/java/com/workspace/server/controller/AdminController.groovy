@@ -1,12 +1,16 @@
 package com.workspace.server.controller
 
+import com.workspace.server.dao.CommoditiesEntityDao
 import com.workspace.server.dao.UserfeedbackEntityDao
 import com.workspace.server.dao.UsersEntityDao
 import com.workspace.server.interceptor.ContentFormatInterceptor
 import com.workspace.server.model.AdministratorEntity
+import com.workspace.server.model.CommoditiesEntity
+import com.workspace.server.model.UsercommoditylogEntity
 import com.workspace.server.model.UserfeedbackEntity
 import com.workspace.server.model.UsersEntity
 import com.workspace.server.service.AdministratorEntityService
+import com.workspace.server.service.CommditiesEntityService
 import com.workspace.server.service.UserfeedbackEntityService
 import com.workspace.server.service.UsersEntityService
 import com.workspace.server.util.ContentFormatter
@@ -28,6 +32,8 @@ public class AdminController {
     @Autowired UserfeedbackEntityService userfeedbackService
     @Autowired UserfeedbackEntityDao userfeedbackDao
     @Autowired AdministratorEntityService AdministratorEntityService
+    @Autowired CommoditiesEntityDao  CommoditiesEntityDaorDao
+    @Autowired CommditiesEntityService CommditiesEntityService
 
 
 
@@ -69,25 +75,20 @@ public class AdminController {
     @ResponseBody
     @RequestMapping("api/searchAllUsersMess") //用户个人信息查询
     public String searchMessByUid(@RequestBody UsersEntity inputParamer,@RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter ) {
-        def var_uid= inputParamer.getUid()
         def jsonOutput = new JsonOutput()
         def result =null
         try {
-            if (var_uid!=''&&var_uid!=0) {
-                List<UsersEntity> userMess = userDao.findAll();
+            List<UsersEntity> userMess = userDao.findAll()
 
-                ((JsonBuilder) contentFormatter.content()) {
-                    'CommoditiesEntitys' userMess, {UsersEntity usersEntity ->
-                        'uid' usersEntity.uid
-                        'uname' usersEntity.uname
-                        'uNumber'  usersEntity.uNumber
-                    }
+            ((JsonBuilder) contentFormatter.content()) {
+                'CommoditiesEntitys' userMess, {UsersEntity usersEntity ->
+                    'uid' usersEntity.uid
+                    'uname' usersEntity.uname
+                    'uNumber'  usersEntity.uNumber
                 }
-                println contentFormatter.toString()
-                result =  contentFormatter.toString()//jsonOutput.toJson(userMess)
-            }else{
-                result = jsonOutput.toJson("{'result':'-1'}")
             }
+            println contentFormatter.toString()
+            result =  contentFormatter.toString()//jsonOutput.toJson(userMess)
 
         }
         catch (Exception ex) {
@@ -104,7 +105,8 @@ public class AdminController {
         def jsonOutput = new JsonOutput()
         def result =null
         try {
-            def ouputList = userfeedbackDao.findAll()
+            List<UserfeedbackEntity> ouputList = userfeedbackDao.findAll()
+            println ouputList
             if(ouputList){
                 result = jsonOutput.toJson(ouputList)
             }else {
@@ -118,7 +120,7 @@ public class AdminController {
         return result.toString()
     }
     @ResponseBody
-    @RequestMapping("api/DelSelectedfeedbackMsg") //管理员查看用户信息反馈
+    @RequestMapping("api/DelSelectedfeedbackMsg") //管理员删除用户信息反馈
     public String DelSelectedfeedbackMsg(@RequestBody List<UserfeedbackEntity> inputParamerList, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter ) {
         def jsonOutput = new JsonOutput()
         def result =null
@@ -148,6 +150,70 @@ public class AdminController {
         }
 
         return contentFormatter.content().toString()
+    }
+
+    @ResponseBody
+    @RequestMapping("api/seeAllGoods") //管理员查看用户信息反馈
+    public String seeAllGoodsAJAx(@RequestBody CommoditiesEntity inputParamer, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter ) {
+        def jsonOutput = new JsonOutput()
+        def result =null
+        try {
+            List<CommoditiesEntity> ouputList = CommoditiesEntityDaorDao.findAll()
+            List<CommoditiesEntity> just20Record = new ArrayList<CommoditiesEntity>()
+            ouputList.eachWithIndex{current,index->
+                def seq =index+1
+                if(seq<=10){
+                        just20Record.add(current)
+                }
+            }
+            ((JsonBuilder) contentFormatter.content()) {
+                'CommoditiesEntitys' just20Record, {CommoditiesEntity commoditiesEntity ->
+                    'cid'    commoditiesEntity.cid
+                    'cName'   commoditiesEntity.cName
+                    'cLink'  commoditiesEntity.cLink
+                    'cLowestPrice'  commoditiesEntity.cLowestPrice
+                }
+            }
+//            println ouputList
+//            if(ouputList){
+//                result = jsonOutput.toJson(ouputList)
+//            }else {
+//                result = jsonOutput.toJson("{'result':'-1'}")
+//            }
+            result= contentFormatter.content()
+        }
+        catch (Exception ex) {
+            println ex.printStackTrace();
+            result = jsonOutput.toJson("{'result':'-1'}")
+        }
+        return result.toString()
+    }
+    @ResponseBody
+    @RequestMapping("/api/delSelectedGoods") //管理员用来管理数据,同时删除多条记录)
+    String delSelectedGoods(@RequestBody List<CommoditiesEntity> InputSearchList, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter) {
+        try{
+            if(InputSearchList!= null) {
+                InputSearchList?.each { current_comm ->
+                    println current_comm?.getCid()
+                    if (current_comm?.getCid() != 0) {
+                        def delResult = CommoditiesEntityDaorDao.delete(current_comm?.getCid());
+                        contentFormatter.content().'content' {
+                            'outputMess' '成功删除选中数据'
+                        }
+                    }
+                }
+            }else{
+                contentFormatter.content().'content' {
+                    'outputMess' '未选择数据，请重试'
+                }
+            }
+        }catch (Exception ex){
+            ex.printStackTrace()
+            contentFormatter.content().'content' {
+                'outputMess' '系统出错，请重试'
+            }
+        }
+        return contentFormatter.toString()
     }
 
 

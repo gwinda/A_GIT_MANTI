@@ -1,9 +1,144 @@
 <template>
-  <div id="manage">
-    <h1>{{jjjj}}</h1>
-    <!--<div v-show="Chuxian">-->
-      <!--ffffffffffffffffffffff-->
-    <!--</div>-->
+  <div id="manage" style="margin: -8px;">
+    <div v-show="HouTai">
+      <label> 欢迎，管理员 </label>
+    <header class="header">
+      <el-row>
+        <el-col :span="20">
+          <el-menu default-active="0" class="el-menu-demo" mode="horizontal" @select="" text-color="black" >
+            <el-menu-item index="1"><span @click="SeeAllfeedbackMsg" style="color: black">反馈管理</span></el-menu-item>
+            <el-menu-item index="2"><span @click="searchAllUsersMess" style="color: black">会员管理</span></el-menu-item>
+            <el-menu-item index="3"><span @click="seeAllGoods" style="color: black">商品管理</span></el-menu-item>
+            <el-menu-item index="4">系统设置</el-menu-item>
+            <el-menu-item index="5">安全退出</el-menu-item>
+          </el-menu>
+        </el-col>
+      </el-row>
+    </header>
+    <!--<div style="position: relative;height: 60px;width: 100%;"></div>-->
+
+    <main>
+      <!-- 左侧导航 -->
+      <div class="main-left">
+        <el-menu default-active="/activePublic"  text-color="black" >
+          <el-menu-item index ='1' :class="{'isActive': !active}"><i class="el-icon-menu"></i><span @click="SeeAllfeedbackMsg" style="color: black">反馈管理</span></el-menu-item>
+          <el-menu-item index="2"  :class="{'isActive': !active}"><i class="el-icon-menu"></i><span @click="searchAllUsersMess" style="color: black">会员管理</span></el-menu-item>
+          <el-menu-item index="3"  :class="{'isActive': !active}"><i class="el-icon-menu"></i><span @click="seeAllGoods" style="color: black">商品管理</span></el-menu-item>
+          <el-menu-item index="4"  :class="{'isActive': !active}"><i class="el-icon-menu"></i>系统设置</el-menu-item>
+          <el-menu-item index="5"  :class="{'isActive': !active}"><i class="el-icon-menu"></i>安全退出</el-menu-item>
+        </el-menu>
+      </div>
+      <!-- 右侧主内容区 -->
+      <div class="main-right" >
+
+        <div v-show="SeeFeedBack" style="color: black">
+          <el-table
+          ref="multipleTable"
+          :data="tableData2"
+          tooltip-effect="dark"
+          style="width: 100%"
+          @selection-change="handleSelectionChange" >
+            <el-table-column
+            type="selection"
+            width="55">
+            </el-table-column>
+            <el-table-column
+            label="用户ID"
+            width="70">
+            <template slot-scope="scope" style="color: dodgerblue">{{ scope.row.uId}}</template>
+            </el-table-column>
+            <el-table-column
+            label="提交时间"
+            width="250">
+            <template slot-scope="scope">{{ scope.row.ufCreateTime}}</template>
+            </el-table-column>
+            <el-table-column
+            label="用户建议"
+            show-overflow-tooltip>
+            <template slot-scope="scope">{{ scope.row.userContent}}</template>
+            </el-table-column>
+          </el-table>
+          <div style="margin-top: 20px">
+            <!--<el-button @click="toggleSelection([tableData3[1], tableData3[2]])">切换第二、第三行的选中状态</el-button>-->
+            <el-button @click="toggleSelection()">取消选择</el-button>
+            <el-button @click="DelSelectedfeedbackMsg">删除选中数据</el-button>
+            <el-button @click="downloadSelectedGoods">下载选择数据</el-button>
+          </div>
+        </div>
+
+
+        <div v-show="SeeAllUsers"  style="color: black">
+          <el-table
+            ref="multipleTable"
+            :data="usersData"
+            tooltip-effect="dark"
+            style="width: 100%"
+            @selection-change="handleSelectionChange" >
+            <el-table-column
+              type="selection"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              label="用户ID"
+              width="70">
+              <template slot-scope="scope" style="color: dodgerblue">{{ scope.row.uid}}</template>
+            </el-table-column>
+            <el-table-column
+              label="用户账号"
+              width="250">
+              <template slot-scope="scope">{{ scope.row.uNumber}}</template>
+            </el-table-column>
+            <el-table-column
+              label="用户昵称"
+              show-overflow-tooltip>
+              <template slot-scope="scope">{{ scope.row.uname}}</template>
+            </el-table-column>
+          </el-table>
+          <div style="margin-top: 20px">
+            <!--<el-button @click="toggleSelection([tableData3[1], tableData3[2]])">切换第二、第三行的选中状态</el-button>-->
+            <el-button @click="toggleSelection()">取消选择</el-button>
+            <el-button @click="DelSelectedfeedbackMsg">删除选中数据</el-button>
+            <el-button @click="downloadSelectedGoods">下载选择数据</el-button>
+          </div>
+        </div>
+
+        <div v-show="AllgoodsManageContent" style="width:800px;text-align: center;">
+          <el-table
+          ref="multipleTable"
+          :data="tableData3"
+          tooltip-effect="dark"
+          style="width: 100%"
+          @selection-change="handleSelectionChange">
+            <el-table-column
+            type="selection"
+            width="55">
+            </el-table-column>
+            <el-table-column
+            label="商品ID"
+            width="70">
+            <template slot-scope="scope">{{ scope.row.cid}}</template>
+            </el-table-column>
+            <el-table-column
+            label="商品链接"
+            width="250">
+            <template slot-scope="scope">{{ scope.row.cLink}}</template>
+            </el-table-column>
+            <el-table-column
+            label="商品名称"
+            show-overflow-tooltip>
+            <template slot-scope="scope">{{ scope.row.cName}}</template>
+            </el-table-column>
+          </el-table>
+          <div style="margin-top: 20px">
+          <el-button @click="toggleSelection()">取消选择</el-button>
+          <el-button @click="DelSelectedfeedbackMsg">删除选中数据</el-button>
+          <el-button @click="downloadSelectedGoods">下载选择数据</el-button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+    </div>
     <div class="containcc" v-show="Chuxian" >
       <div class="login-wrap2">
         <!--v-show="showLogin" -->
@@ -16,150 +151,8 @@
         <a href = '/' >返回首页</a>
       </div>
     </div>
-    <div v-show="zhuyao">
-      <el-container>
-        <el-aside width="200px">
-          <el-row class="tac" style="color: black;">
-            <el-col>
-              <el-menu
-                default-active="2"
-                class="el-menu-vertical-demo"
-                @close="handleClose">
-                <el-menu-item index="1">
-                  <i class="el-icon-setting"></i>
-                  <span slot="title">导航一</span>
-                </el-menu-item>
-                <el-menu-item index="2">
-                  <i class="el-icon-menu"></i>
-                  <span slot="title">导航二</span>
-                </el-menu-item>
-                <el-menu-item index="3" disabled>
-                  <i class="el-icon-document"></i>
-                  <span slot="title">导航三</span>
-                </el-menu-item>
-                <el-menu-item index="4">
-                  <i class="el-icon-setting"></i>
-                  <span slot="title">导航四</span>
-                </el-menu-item>
-              </el-menu>
-            </el-col>
-          </el-row>
-        </el-aside>
-        <el-main>
 
-
-
-          Main</el-main>
-
-
-
-      </el-container>
-
-      <h1 >你好{{jjjj}}</h1>
-
-      <div style="padding-left: 20px;">
-        <el-col><el-button @click="SeeAllfeedbackMsg">查看所有用户反馈信息</el-button> <el-button @click="SeeAllfeedbackMsg">查看所有用户反馈信息</el-button></el-col>
-        <el-col><el-button @click="SeeAllfeedbackMsg">查看所有用户反馈信息</el-button></el-col>
-        <el-col><el-button @click="SeeAllfeedbackMsg">查看所有用户反馈信息</el-button></el-col>
-        <el-row> <el-button @click="SeeAllfeedbackMsg">查看所有用户反馈信息</el-button><el-button @click="SeeAllfeedbackMsg">查看所有用户反馈信息</el-button></el-row>
-        <el-row> <el-button @click="SeeAllfeedbackMsg">查看所有用户反馈信息</el-button></el-row>
-        <el-row> <el-button @click="SeeAllfeedbackMsg">查看所有用户反馈信息</el-button></el-row>
-
-      <el-button @click="searchAllUsersMess">查看所有用户个人信息</el-button>
-      <el-button @click="downloadSelectedGoods">下载选择数据</el-button>
-      </div>
     </div>
-
-
-    <!--<div class="HELLO" v-show="hahaha">-->
-    <!--<div class="containcc" v-show="ABLLL" >-->
-      <!--<div class="login-wrap2">-->
-        <!--&lt;!&ndash;v-show="showLogin" &ndash;&gt;-->
-        <!--<h2>Sign In Now</h2>-->
-        <!--<p   v-show="showTishi2">{{word2}}</p>-->
-        <!--<input type="text" placeholder="E-MAIL" v-model="username" >-->
-        <!--<input type="password" placeholder="PASSWORD" v-model="password">-->
-        <!--<el-button style="margin: auto;"  @click="login" type="primary" align="center" class="sumbit">管理员登录</el-button >-->
-        <!--<br>-->
-        <!--<a href = '/' >返回首页</a>-->
-      <!--</div>-->
-    <!--</div>-->
-    <!--<div v-show="ADAll">-->
-      <!--你好<h1 v-model="AAAaid"></h1>-->
-      <!--<el-button @click="SeeAllfeedbackMsg">查看所有用户反馈信息</el-button>-->
-      <!--<el-button @click="searchAllUsersMess">查看所有用户个人信息</el-button>-->
-      <!--<el-button @click="downloadSelectedGoods">下载选择数据</el-button>-->
-    <!--</div>-->
-    <!--<div v-show="AllgoodsManageContent" style="width:800px;text-align: center;">-->
-        <!--<el-table-->
-          <!--ref="multipleTable"-->
-          <!--:data="tableData3"-->
-          <!--tooltip-effect="dark"-->
-          <!--style="width: 100%"-->
-          <!--@selection-change="handleSelectionChange">-->
-          <!--<el-table-column-->
-            <!--type="selection"-->
-            <!--width="55">-->
-          <!--</el-table-column>-->
-          <!--<el-table-column-->
-            <!--label="商品ID"-->
-            <!--width="70">-->
-            <!--<template slot-scope="scope">{{ scope.row.cid}}</template>-->
-          <!--</el-table-column>-->
-          <!--<el-table-column-->
-            <!--label="商品链接"-->
-            <!--width="250">-->
-            <!--<template slot-scope="scope">{{ scope.row.cLink}}</template>-->
-          <!--</el-table-column>-->
-          <!--<el-table-column-->
-            <!--label="商品名称"-->
-            <!--show-overflow-tooltip>-->
-            <!--<template slot-scope="scope">{{ scope.row.cName}}</template>-->
-          <!--</el-table-column>-->
-        <!--</el-table>-->
-        <!--<div style="margin-top: 20px">-->
-          <!--<el-button @click="toggleSelection()">取消选择</el-button>-->
-          <!--<el-button @click="delSelectedGoods">删除选中数据</el-button>-->
-          <!--<el-button @click="downloadSelectedGoods">下载选择数据</el-button>-->
-        <!--</div>-->
-      <!--</div>-->
-
-    <!--<div v-show="SeeFeedBack">-->
-      <!--<el-table-->
-        <!--ref="multipleTable"-->
-        <!--:data="tableData2"-->
-        <!--tooltip-effect="dark"-->
-        <!--style="width: 100%"-->
-        <!--@selection-change="handleSelectionChange">-->
-        <!--<el-table-column-->
-          <!--type="selection"-->
-          <!--width="55">-->
-        <!--</el-table-column>-->
-        <!--<el-table-column-->
-          <!--label="用户ID"-->
-          <!--width="70">-->
-          <!--<template slot-scope="scope">{{ scope.row.uid}}</template>-->
-        <!--</el-table-column>-->
-        <!--<el-table-column-->
-          <!--label="提交时间"-->
-          <!--width="250">-->
-          <!--<template slot-scope="scope">{{ scope.row.ufcreate_time}}</template>-->
-        <!--</el-table-column>-->
-        <!--<el-table-column-->
-          <!--label="用户建议"-->
-          <!--show-overflow-tooltip>-->
-          <!--<template slot-scope="scope">{{ scope.row.user_content}}</template>-->
-        <!--</el-table-column>-->
-      <!--</el-table>-->
-      <!--<div style="margin-top: 20px">-->
-        <!--&lt;!&ndash;<el-button @click="toggleSelection([tableData3[1], tableData3[2]])">切换第二、第三行的选中状态</el-button>&ndash;&gt;-->
-        <!--<el-button @click="toggleSelection()">取消选择</el-button>-->
-        <!--<el-button @click="DelSelectedfeedbackMsg">删除选中数据</el-button>-->
-        <!--<el-button @click="downloadSelectedGoods">下载选择数据</el-button>-->
-      <!--</div>-->
-    <!--</div>-->
-    </div>
-  <!--</div>-->
 
 
 </template>
@@ -175,11 +168,21 @@
           username:'',
           password:'',
           word2:'',
-          zhuyao:true,
+          active:true,
+          HouTai:false,
+          AllgoodsManageContent:false,
+          tableData3:[],
+          tableData_goods:[],
+          SeeFeedBack:false,
+          tableData2:[],
+          SeeAllUsers:false,
+          usersData:[],
+
         }
       },
       mounted() {
         this.hahaha=true
+        this.Chuxian= true;
       },
       methods: {
         login() {
@@ -213,7 +216,7 @@
                 this.word2 = "密码正确"
                 this.showTishi2 = true
                 this.Chuxian = false
-                this.zhuyao = true
+                this.HouTai = true
                 this.jjjj=  ""+res.data.content.outputMess
               }
             })
@@ -231,16 +234,123 @@
             this.$refs.multipleTable.clearSelection();
           }
         },
+        seeAllGoods(){
+          this.SeeAllUsers= false
+          //this.AllgoodsManageContent =false
+          this.SeeFeedBack = false
+          let that = this
+          if(!this.user_id){
+          this.$axios.post('https://localhost:888/api/seeAllGoods',{
+              uid: this.user_id,
+            })
+            .then((response) => {
+              this.AllgoodsManageContent = true //用户反馈界面
+              console.log(response.data)
+              this.tableData3 = response.data.CommoditiesEntitys
+            })
+          }else {
+            this.$message({
+            showClose: true,
+            message: '无权限',
+            type: 'error'
+          });
+        }
+        },
+        delSelectedGoods(){
+          if (!this.user_id) {
+            let that = this
+            this.$axios.post('https://localhost:888/api/delSelectedGoods', this.multipleSelection)
+              .then((response) => {
+
+                console.log(response.data.content.outputMess)
+                //this.tableData3 = response.data.CommoditiesEntitys
+                this.$message({
+                  showClose: true,
+                  message: response.data.content.outputMess,
+                  type: 'success'
+                });
+              })
+          } else {
+            this.$message({
+              showClose: true,
+              message: '无权限',
+              type: 'error'
+            });
+          }
+        },
         downloadSelectedGoods(){
 
         },
         SeeAllfeedbackMsg(){
+          this.SeeAllUsers= false
+          this.AllgoodsManageContent =false
+          if (!this.user_id) {
+            let that = this
+            this.$axios.post('https://localhost:888/api/SeeAllfeedbackMsg', {
+              uid: this.user_id,
+            })
+              .then((response) => {
+                this.SeeFeedBack = true //用户反馈界面
+                this.tableData2 = response.data
+                console.log(response.data)
+
+              })
+          } else {
+            this.$message({
+              showClose: true,
+              message: '无权限',
+              type: 'error'
+            });
+          }
+
 
         },
         DelSelectedfeedbackMsg(){
+          if (!this.user_id) {
+            let that = this
+            this.$axios.post('https://localhost:888/api/DelSelectedfeedbackMsg', this.multipleSelection)
+              .then((response) => {
+
+                console.log(response.data)
+                this.SeeAllfeedbackMsg()
+                //this.tableData3 = response.data.CommoditiesEntitys
+                this.$message({
+                  showClose: true,
+                  message: response.data.content.outputMess,
+                  type: 'info'
+                });
+              })
+          } else {
+            this.$message({
+              showClose: true,
+              message: '无权限',
+              type: 'error'
+            });
+          }
+         // alert("DelSelectedfeedbackMsg")
 
         },
-        searchAllUsersMess(){
+        searchAllUsersMess(){ //查看所有用户信息
+          //this.SeeAllUsers= false
+          this.AllgoodsManageContent =false
+          this.SeeFeedBack = false
+          if (!this.user_id) {
+            let that = this
+            this.$axios.post('https://localhost:888/api/searchAllUsersMess', {
+              user_id :this.user_id,
+            })
+              .then((response) => {
+                this.SeeAllUsers = true //用户反馈界面
+                console.log(response.data)
+                this.usersData = response.data.CommoditiesEntitys
+              })
+          } else {
+            this.$message({
+              showClose: true,
+              message: '无权限',
+              type: 'error'
+            });
+          }
 
         },
       }
@@ -248,7 +358,10 @@
 </script>
 
 <style scoped>
-
+  body{
+    margin: 0;
+    padding: 0;
+  }
   .containcc h2 {
     color: #8b5c7e;
     font-size: 29px;
@@ -338,11 +451,6 @@
   .login-wrap2 { padding-left:2%;padding-top:8%;text-align:center;}
   input{display:block; width:300px; height:40px; line-height:20px; margin:0 auto; margin-bottom: 10px; outline:none; border:1px solid #888; padding:10px; box-sizing:border-box;}
   p{color: seashell;}
-  button{display:block; width:250px; height:40px;  margin:0 auto; border:none; background-color:#3a8ee6; color:#fff; font-size:16px; }
-  /*span{*/
-    /*cursor:pointer;*/
-    /*color: white*/
-  /*}*/
   .tac{
     /*width: 100vw;*/
     height: 100vw;
@@ -355,38 +463,15 @@
     -moz-transition:0.5s all;
     -ms-transition:0.5s all;
   }
-   .el-header, .el-footer {
-     background-color: #B3C0D1;
-     color: #333;
-     text-align: center;
-     line-height: 60px;
-   }
+  /* 头部导航 */
+  header{z-index: 1000;min-width: 1200px;transition: all 0.5s ease; border-top: solid 4px #3091F2; background-color: #fff; box-shadow: 0 2px 4px 0 rgba(0,0,0,.12),0 0 6px 0 rgba(0,0,0,.04); }
+  header.header-fixed{position: fixed;top: 0;left: 0;right: 0;}
+  header .el-menu-demo{padding-left: 300px!important;}
+  /* 主内容区 */
+  main{ display: -webkit-box; display: -ms-flexbox; display: flex; min-height: 800px; border: solid 40px #E9ECF1; background-color: #FCFCFC; }
+  main .main-left{text-align: center;width: 200px;float: left;}
+  main .main-right{-webkit-box-flex: 1; -ms-flex: 1; flex: 1; background-color: #fff; padding: 50px 70px; }
 
-  .el-aside {
-    /*background-color: #D3DCE6;*/
-    color: black;
-    text-align: center;
-    line-height: 200px;
-  }
-
-  .el-main {
-    background-color: #E9EEF3;
-    color: #333;
-    text-align: center;
-    line-height: 160px;
-  }
-
-  body > .el-container {
-    margin-bottom: 40px;
-  }
-
-  .el-container:nth-child(5) .el-aside,
-  .el-container:nth-child(6) .el-aside {
-    line-height: 260px;
-  }
-
-  .el-container:nth-child(7) .el-aside {
-    line-height: 320px;
-  }
+  main .el-menu{background-color: transparent!important;}
 
 </style>
