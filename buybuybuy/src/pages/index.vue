@@ -1,17 +1,17 @@
 <template>
-  <div id="index" style="margin:-8px">
+  <div id="index" style="margin:-8px;">
    <div class="top_SYSTEM">
-     <header class="header" style="width:100%;">
+     <header class="header" style="width:100%; ">
        <el-row>
          <el-col :span="24">
-           <el-menu default-active="1"  class="el-menu-demo" mode="horizontal" @select="">
+           <el-menu default-active="1"  mode="horizontal" @select="">
              <el-menu-item index="1" @click="goToindex">首页</el-menu-item>
-             <el-menu-item index="2">在线商城</el-menu-item>
+             <el-menu-item index="2" >在线商城</el-menu-item>
              <!--<el-menu-item index="3">客户管理</el-menu-item>-->
              <!--<el-menu-item index="4">系统设置</el-menu-item>-->
              <!--<el-menu-item index="5">活动发布</el-menu-item>-->
              <div v-if="user_id">
-               <el-submenu index="6"  style="float: right">
+               <el-submenu index="6"   style="float: right;font-family: '微软雅黑', Arial, sans-serif">
                  <template slot="title">您好,{{username}}</template>
                  <el-menu-item index="6-1"   @click="seemyself">个人信息</el-menu-item>
                  <el-tooltip content="点击我注销" placement="top">
@@ -21,14 +21,13 @@
                </el-submenu>
              </div>
              <div v-else>
-               <el-menu-item index="6" style="float: right"  @click="regAndLogin"> 登录注册 </el-menu-item>
+               <el-menu-item index="6" style="float: right;font-family: '微软雅黑', Arial, sans-serif" @click="regAndLogin"> 登录注册 </el-menu-item>
              </div>
            </el-menu>
          </el-col>
        </el-row>
      </header>
-    <div > <h1 class = 'title_header'>Commodity Price Monitoring System</h1></div>
-     <!--<div id="main" style="width: 600px;height: 400px;"  商品监测对比系统></div>-->
+
 
 
      <el-container>
@@ -59,12 +58,13 @@
            <!--</div>-->
          <!--</el-menu>-->
        <!--</el-header>-->
-       <el-container>
+       <el-container style="padding-top: 0px">
          <el-aside width="200px"  v-show="myselfSee">
+           <!--<div id="main" style="width: 600px;height: 400px;"  商品监测对比系统></div>-->
            <el-row class="tac" style="height: 888px;">
              <el-col>
                <el-menu  default-active="2"  class="el-menu-vertical-demo" active-text-color="#ffd04b" text-color="black">
-                 <h1><i class="el-icon-goods" ></i>{{username}}的个人信息 <i></i></h1>
+                 <h1 style="font-size:18px;font-family:'Helvetica','Arial',serif;color: cadetblue;line-height: 10px;"><i class="el-icon-goods" >  </i>  管   理</h1>
                  <el-submenu index="1">
                    <template slot="title">
                      <i class="el-icon-menu"></i>
@@ -98,6 +98,7 @@
          </el-aside>
          <el-container>
            <el-main>
+             <div > <h1 class = 'title_header'>Commodity Price Monitoring System</h1></div>
              <div class="sousuo" >
                <el-input placeholder="请输入链接地址如：http://item.jd.com/5324065.html" class="inputs" v-model="inputLink"></el-input>
                <el-button  type="primary" round  @click="Goodsearch" >搜索</el-button><br/>
@@ -115,13 +116,13 @@
                      <div>
                        <!--start 链接搜索结果,返回商品信息-->
                        <div v-show="existgood">
-                         <el-container style=" height:200px ; width:100%; background-color: white;">
-                           <el-aside width="160px" style="height:200px ;line-height: 16px;">
-                             <img  v-bind:src="[imgSrc]" style="margin:0; padding:0;height: 197px; width:160px;"/>
+                         <el-container style=" height:200px; width:90%;background-color: white; ">
+                           <el-aside width="160px" style="height:200px ;line-height: 16px;overflow:hidden ">
+                             <img  v-bind:src="[imgSrc]" style="margin:0; padding:0;height: 197px; width:100%;"/>
                            </el-aside>
-                           <el-main style="height:200px ;width:100%;;background-color: white;">
+                           <el-main style="width:100%;">
                              <div class = "goodsList_Layout">
-                               <el-row > 商品名称：{{hello}}</el-row>
+                               <el-row  style="word-wrap:break-word; word-break:break-all;"> 商品名称：{{hello}}</el-row>
                                <el-row > 商品价格：{{goodPrice}}</el-row>
                                <el-row > 商品链接：<a  v-bind:href="[''+inputLink]">{{inputLink}}</a></el-row>
                                <el-button type="primary" round   @click="UsersGoodsInsert(CId)" >订阅该商品</el-button>
@@ -494,23 +495,34 @@
         this.myselfSee = true
       },
       signOut() { //注销登录
-        this.existgood = false //搜索商品结果界面
-        this.selfGoodsLook =false //所有已经订阅的商品结果界面
-        this.MyContentMsg =false //我的个人信息界面
-        this.updatepwdContent =false  //修改密码界面
-        this.tofeedback =false //用户反馈界面
-        this.goodsManageContent = false //商品管理界面
-        this.FindOneLog = false//商品价格记录
-        this.myselfSee = false //我的侧边菜单栏
-        this.zhuye= false //主图走马灯
-        this.user_id = ''
-        this.username = ''
-        this.$message({
-          showClose: true,
-          message: '账号已注销,请重新登录',
-          type: 'success'
+        this.$confirm('即将注销该账户, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.existgood = false //搜索商品结果界面
+          this.selfGoodsLook =false //所有已经订阅的商品结果界面
+          this.MyContentMsg =false //我的个人信息界面
+          this.updatepwdContent =false  //修改密码界面
+          this.tofeedback =false //用户反馈界面
+          this.goodsManageContent = false //商品管理界面
+          this.FindOneLog = false//商品价格记录
+          this.myselfSee = false //我的侧边菜单栏
+          this.zhuye= false //主图走马灯
+          this.user_id = ''
+          this.username = ''
+          this.$message({
+            showClose: true,
+            message: '账号已注销,请重新登录',
+            type: 'success'
+          });
+          this.$router.push('/')
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消注销'
+          });
         });
-        this.$router.push('/')
       },
       updatePWD() { //异步修改密码功能，并返回修改结果
         if (this.user_id) {
@@ -988,21 +1000,39 @@
           }
 
         },
+        DelSelectedfeedbackMsg() {
+          if (this.user_id) {
+            let that = this
+            this.$axios.post('https://localhost:888/api/DelSelectedfeedbackMsgFromCustomer', this.multipleSelection)
+              .then((response) => {
+                console.log(response.data)
+                this.SeeAllfeedbackMsg()
+                //this.tableData3 = response.data.CommoditiesEntitys
+                this.$message({
+                  showClose: true,
+                  message: response.data.content.outputMess,
+                  type: 'info'
+                });
+              })
+          } else {
+            this.$message({
+              showClose: true,
+              message: '无权限',
+              type: 'error'
+            });
+          }
+        },
       }
   }
 
 </script>
 
 <style scoped>
-  body{
-    margin:0;
-
-  }
   /* 头部导航 */
-  header{z-index: 500;min-width: 1200px;transition: all 0.5s ease;  background-color:black; box-shadow: 0 2px 4px 0 rgba(0,0,0,.12),0 0 6px 0 rgba(0,0,0,.04); }
+  .header{ z-index: 500;min-width: 1200px;transition: all 0.5s ease;  background-color:black; box-shadow: 0 2px 4px 0 rgba(0,0,0,.12),0 0 6px 0 rgba(0,0,0,.04); }
   header .el-{}
   header.header-fixed{position: fixed;top: 0;left: 0;right: 0;}
-  header .el-menu-demo{padding-left: 300px!important;}
+  .header .el-menu-demo{ font-family: "Helvetica","Arial",serif;padding-left: 300px!important;}
   .threed{
     color: #fafafa;
     letter-spacing: 0;
@@ -1010,8 +1040,8 @@
   }
   .top_SYSTEM{
     background-image: url("../assets/bg.jpg");
-    background-size:100% 100%;
-    height:100vw;
+    background-size:100% 200%;
+    /*height:100vw;*/
     width:100%;
 
     /*margin: -8px;*/
@@ -1031,22 +1061,24 @@
 
   .title_header{
     /*background-color: azure;*/
+    height: 0px;
+    font-size: 32px;
     text-align: center;
-    line-height: 30px;
+    line-height: 10px;
     font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
     color: whitesmoke;
     letter-spacing: 0;
-    text-shadow: 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135
+    text-shadow: 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 4px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135
   }
   .el-header{
     /*background-color: #B3C0D1;*/
-    color: #333;
+    color: Red;
     text-align: center;
     line-height: 60px;
   }
   .el-footer {
     /*background-color: #B3C0D1;*/
-    color: #333;
+    color: REd;
     text-align: center;
     line-height: 60px;
     bottom: 4px;
@@ -1056,7 +1088,7 @@
     /*background-color: #D3DCE6;*/
     color: #333;
     text-align: center;
-    line-height: 60px;
+    line-height: 100px;
   }
 
   .el-main {
@@ -1072,11 +1104,11 @@
 
   .el-container:nth-child(5) .el-aside,
   .el-container:nth-child(6) .el-aside {
-    line-height: 260px;
+    line-height: 160px;
   }
 
   .el-container:nth-child(7) .el-aside {
-    line-height: 320px;
+    line-height: 220px;
   }
   .sousuo{
     position: absolute;
@@ -1094,11 +1126,16 @@
   }
   /*布局格式CSS样式*/
   .el-row {
-    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 32px;
+    font-style: normal;
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 
   }
   .el-col {
     border-radius: 4px;
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    color: blanchedalmond;
 
   }
   .bg-purple-dark {

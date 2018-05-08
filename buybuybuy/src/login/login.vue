@@ -1,15 +1,15 @@
 <template>
   <div id="loginandregister">
-    <div class="contain">
+    <div class="contain2">
     <div class="login-wrap" v-show="showLogin">
       <h2>Sign In Now</h2>
       <p   v-show="showTishi">{{word}}</p>
       <input type="text" placeholder="E-MAIL" v-model="username" >
       <input type="password" placeholder="PASSWORD" v-model="password">
-      <el-checkbox class ='checkbox' type="checkbox">Remember Me  &nbsp;  &nbsp;  &nbsp;  &nbsp;&nbsp;    </el-checkbox>
+      <el-checkbox class ='checkbox' type="checkbox" style="color: white">Remember Me  &nbsp;  &nbsp;  &nbsp;  &nbsp;&nbsp;    </el-checkbox>
       <a  v-on:click="TofindPass" >找回密码</a>
       <br/>
-      <el-button style="margin: auto;"  @click="login" type="primary" align="center" class="sumbit">登录</el-button >
+      <el-button style="margin: auto;width:150px;"  @click="login" type="primary" align="center" class="sumbit" >登录</el-button >
       <br>
       <span v-on:click="ToRegister" >没有账号？马上注册</span><br/>
       <a href = '/' >返回首页</a>
@@ -30,7 +30,7 @@
         <p  v-show="showTishi">{{word}}</p>
         <input type="text" placeholder="E-MAIL" v-model="E_MAIL" >
         <br/>
-        <el-button style="margin: auto;"  @click="login" type="primary" align="center" class="sumbit">找回密码</el-button >
+        <el-button style="display:block; width:250px; height:40px; line-height: 40px; margin:0 auto; border:none; background-color:#3a8ee6; color:#fff; font-size:16px; margin-bottom:5px"  @click="login" type="primary" align="center" class="sumbit">找回密码</el-button >
         <br/>
        &nbsp;  <span v-on:click="ToRegister" >没有账号？马上注册</span> &nbsp; &nbsp;
        <span v-on:click="ToLogin" >已有账号？马上登录</span><br/>
@@ -40,12 +40,30 @@
   </div>
 </template>
 
-<style>
+<style scoped>
+  #loginandregister{
+    background-image: url("../assets/bg.jpg") ;
+    position:fixed;
+    top: 0;
+    left: 0;
+    width:100%;
+    height:100%;
+    min-width: 1000px;
+    z-index:-10;
+    zoom: 1;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    background-position: center 0;
+    background-position: center 0;
+  }
   .checkbox{
     margin-left: 1px;
     padding-left: 1px;
   }
-  .contain h2 {
+  .contain2 h2 {
     color: #8b5c7e;
     font-size: 29px;
     letter-spacing: 2px;
@@ -53,12 +71,7 @@
     padding-bottom: 15px;
     text-align: center;
   }
-  .w3layouts-main {
-    width: 30%;
-    margin:5em auto;
-    background:rgba(171, 119, 157, 0.27);
-    padding: 42px 35px;
-  }
+
   /*--//header--*/
   /*--login--*/
   input.ggg{
@@ -70,7 +83,7 @@
     margin: 14px 0px;
     background: none;
   }
-  .contain h6 {
+  .contain2 h6 {
     font-size: 16px;
     float: right;
     width: 37%;
@@ -79,7 +92,7 @@
     margin-top: 8px;
     text-decoration:underline;
   }
-  .contain a{
+  .contain2 a{
     color:white;
     line-height: 44px;
 
@@ -112,7 +125,7 @@
     -moz-transition:0.5s all;
     -ms-transition:0.5s all;
   }
-  .contain a:hover{
+  .contain2 a:hover{
     color:#f0bcb4;
     transition:0.5s all;
     -webkit-transition:0.5s all;
@@ -137,7 +150,7 @@
     -o-background-size: cover;
     background-position: center 0;
   }
-  .contain{
+  .contain2{
     background:rgba(171, 119, 157, 0.27);
     margin-top: 10%;
     margin-left:35%;
@@ -152,7 +165,7 @@
   .register-wrap{ padding-left:4%;padding-top:8%;text-align:center;}
   input{display:block; width:300px; height:40px; line-height:20px; margin:0 auto; margin-bottom: 10px; outline:none; border:1px solid #888; padding:10px; box-sizing:border-box;}
   p{color: seashell;}
-  button{display:block; width:250px; height:40px; line-height: 40px; margin:0 auto; border:none; background-color:#3a8ee6; color:#fff; font-size:16px; margin-bottom:5px;}
+  /*button{display:block; width:250px; height:40px; line-height: 40px; margin:0 auto; border:none; background-color:#3a8ee6; color:#fff; font-size:16px; margin-bottom:5px;}*/
   span{
     cursor:pointer;
     color: white
@@ -172,6 +185,7 @@
   import { setCookie,getCookie,delCookie } from '../assets/js/cookies.js'
   export default{
     name:'loginandregister',
+
     data(){
       return{
         showLogin: true,
@@ -240,6 +254,7 @@
           })
         }
       },
+
       ToRegister(){
         this.showRegister = true;
         this.showLogin = false;
