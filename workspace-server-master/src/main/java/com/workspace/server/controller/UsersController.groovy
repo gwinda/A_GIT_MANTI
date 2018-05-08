@@ -234,6 +234,28 @@ public class UsersController {
         }
         return result.toString()
     }
+    @ResponseBody
+    @RequestMapping("api/SeeCustmerfeedbackMsg") //用户信息反馈信息插入
+    public String SeeCustmerfeedbackMsg(@RequestBody UserfeedbackEntity inputParamer, @RequestAttribute(value = ContentFormatInterceptor.CONTENT_FORMATTER) ContentFormatter contentFormatter ) {
+        def uid = inputParamer.getuId()
+        println inputParamer.getUserContent()
+        def jsonOutput = new JsonOutput()
+        def result =null
+        try {
+            if (uid!=''&&uid!=0) {
+                def feedbackList= userfeedbackService.findUserfeedbackEntityByuId(uid)
+                jsonOutput.toJson(feedbackList)
+            }else{
+                result = jsonOutput.toJson("{'result':'-1'}")
+            }
+
+        }
+        catch (Exception ex) {
+            println ex.printStackTrace();
+            result = jsonOutput.toJson("{'result':'-1'}")
+        }
+        return result.toString()
+    }
 
 
 

@@ -90,7 +90,7 @@
                  </el-menu-item>
                  <el-menu-item index="5">
                    <i class="el-icon-message"></i>
-                   <span slot="title"  @click = 'feedbackMsg'>信息反馈</span>
+                   <span slot="title"  @click = 'seefeedbackMsg'>信息反馈</span>
                  </el-menu-item>
                </el-menu>
              </el-col>
@@ -186,7 +186,38 @@
                        <!--个人密码修改界面 END-->
                        <!--用户反馈界面-->
                        <div v-show="tofeedback">
-
+                         <el-table
+                           ref="multipleTable"
+                           :data="tableData_feedback"
+                           tooltip-effect="dark"
+                           style="width: 100%"
+                           @selection-change="handleSelectionChange" >
+                           <el-table-column
+                             type="selection"
+                             width="55">
+                           </el-table-column>
+                           <el-table-column
+                             label="用户ID"
+                             width="70">
+                             <template slot-scope="scope" style="color: dodgerblue">{{ scope.row.uId}}</template>
+                           </el-table-column>
+                           <el-table-column
+                             label="提交时间"
+                             width="250">
+                             <template slot-scope="scope">{{ scope.row.ufCreateTime}}</template>
+                           </el-table-column>
+                           <el-table-column
+                             label="用户建议"
+                             show-overflow-tooltip>
+                             <template slot-scope="scope">{{ scope.row.userContent}}</template>
+                           </el-table-column>
+                         </el-table>
+                         <div style="margin-top: 20px">
+                           <!--<el-button @click="toggleSelection([tableData3[1], tableData3[2]])">切换第二、第三行的选中状态</el-button>-->
+                           <el-button @click="toggleSelection()">取消选择</el-button>
+                           <el-button @click="DelSelectedfeedbackMsg">删除选中数据</el-button>
+                           <el-button @click="feedbackMsg">提交反馈</el-button>
+                         </div>
                        </div>
                        <!--用户反馈界面 END-->
                        <!--已经订阅的商品管理界面-->
@@ -928,7 +959,35 @@
               type: 'error'
             });
           }
-        }
+        },
+        seefeedbackMsg(){
+          this.existgood = false //搜索商品结果界面
+          this.selfGoodsLook =false //所有已经订阅的商品结果界面
+          this.MyContentMsg =false //我的个人信息界面
+          this.updatepwdContent =false  //修改密码界面
+          this.FindOneLog = false//商品价格记录
+          this.zhuye= false //主图走马灯
+          this.tofeedback =true
+          if (this.user_id) {
+            let that = this
+            this.$axios.post('https://localhost:888/api/SeeCustmerfeedbackMsg', {
+              uid: this.user_id,
+            })
+              .then((response) => {
+                this.SeeFeedBack = true //用户反馈界面
+                this.tableData2 = response.data
+                console.log(response.data)
+
+              })
+          } else {
+            this.$message({
+              showClose: true,
+              message: '无权限',
+              type: 'error'
+            });
+          }
+
+        },
       }
   }
 
