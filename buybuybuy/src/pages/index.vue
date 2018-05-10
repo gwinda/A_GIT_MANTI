@@ -108,7 +108,35 @@
                      <div style="height:100%;"><img  v-bind:src="[item]" style=" width: 100%; height: 100%;" /></div>
                    </el-carousel-item>
                  </el-carousel>
+                 <!--<div  class="row_list">-->
+                   <!--<h1>Sale</h1>-->
+                   <!--<el-row :gutter="20">-->
+                     <!--<el-col :span="6">-->
+                       <!--<div class="grid-content bg-purple">-->
+                         <!--<img  src="../assets/1.jpg" style="margin:0; padding:0;height: 197px; width:100%;"/>-->
+                         <!--<p>订阅最多的商品名称</p>-->
+                         <!--<el-button > 我也要</el-button>-->
+                       <!--</div>-->
+                     <!--</el-col>-->
+
+                     <!--<el-col :span="6">-->
+                       <!--<div class="grid-content bg-purple">-->
+                         <!--<img  src="../assets/1.jpg" style="margin:0; padding:0;height: 197px; width:100%;"/>-->
+                         <!--<p>订阅最多的商品名称</p>-->
+                         <!--<el-button > 我也要</el-button>-->
+                       <!--</div>-->
+                     <!--</el-col>-->
+                     <!--<el-col :span="6">-->
+                       <!--<div class="grid-content bg-purple">-->
+                         <!--<img  src="../assets/1.jpg" style="margin:0; padding:0;height: 197px; width:100%;"/>-->
+                         <!--<p>订阅最多的商品名称</p>-->
+                         <!--<el-button > 我也要</el-button>-->
+                       <!--</div>-->
+                     <!--</el-col>-->
+                   <!--</el-row>-->
+                 <!--</div>-->
                </div>
+
                <!--start -->
                <div style="">
                  <el-row>
@@ -335,8 +363,9 @@
           zhuye:true,
           MyContentMsg:false,
           goodsManageContent:false,
-          itemPic:['http://pic1.win4000.com/pic/1/23/1acf1215148.jpg','http://ww4.sinaimg.cn/bmiddle/865cea84gw1erfi2ormusg20c806sx6p.jpg','http://ww2.sinaimg.cn/large/6d1a569dtw1eftwwwdgx5g20dw06ygz4.gif','http://img3.100bt.com/upload/ttq/20130915/1379247772938_middle.gif'],
+          itemPic:['http://img.anhuinews.com/0/02/69/98/2699876_765947.jpg','https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2506844760,2624204636&fm=27&gp=0.jpg','https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1525955981382&di=85d76d17c8ac9af945cc134ab70390c7&imgtype=0&src=http%3A%2F%2Fpic26.photophoto.cn%2F20130329%2F0020033063843971_b.jpg','http://images.missyuan.com/attachments/day_120708/20120708_fc946beb45d61f289e7f8Eae7EtUoL3W.jpg'],
           tableData3:[],
+          tableData_feedback:[],
           tableData: [{
             date: '2016-05-02',
             name: '王小虎',
@@ -983,11 +1012,11 @@
           if (this.user_id) {
             let that = this
             this.$axios.post('https://localhost:888/api/SeeCustmerfeedbackMsg', {
-              uid: this.user_id,
+              uId: this.user_id,
             })
               .then((response) => {
                 this.SeeFeedBack = true //用户反馈界面
-                this.tableData2 = response.data
+                this.tableData_feedback = response.data
                 console.log(response.data)
 
               })
@@ -1173,6 +1202,11 @@
     /*-webkit-filter:blur(1px);*/
     /*filter:blur(1px);*/
 
+  }
+  .row_list{
+    width:1000px;
+    /*padding-left: 400px;*/
+    /*margin-left: 40px;*/
   }
 
 </style>

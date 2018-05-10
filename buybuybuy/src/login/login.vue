@@ -11,19 +11,17 @@
       <br/>
       <el-button style="margin: auto;width:150px;"  @click="login" type="primary" align="center" class="sumbit" >登录</el-button >
       <br>
-      <span v-on:click="ToRegister" >没有账号？马上注册</span><br/>
-      <a href = '/' >返回首页</a>
+      <span v-on:click="ToRegister" >没有账号？马上注册</span> &nbsp;&nbsp;&nbsp; <a href = '/' style="text-decoration:none;" >返回首页</a>
     </div>
 
     <div class="register-wrap" v-show="showRegister">
       <h2>REGISTER NOW </h2>
-      <p v-show="showTishi">{{word}}</p>
+      <span v-show="showTishi">{{word}}</span>
       <input type="text" placeholder="请输入用户名" v-model="newUsername">
       <input type="text" placeholder="请输入邮箱 eg. 111@mm.com" v-model="newEmail">
       <input type="password" placeholder="请输入密码(6-20位)" v-model="newPassword">
       <el-button  v-on:click="register" type="primary" class="sumbit" >注册</el-button >
-      <span v-on:click="ToLogin" >已有账号？马上登录</span><br/>
-      <a href = '/' >返回首页</a>
+      <span v-on:click="ToLogin" >已有账号？马上登录</span> &nbsp;&nbsp;&nbsp; <a href = '/' style="text-decoration:none;"  >返回首页</a>
     </div>
      <div class="return-wrap" v-show="returnwrap">
         <h2>FIND PASSWORD</h2>
@@ -33,8 +31,9 @@
         <el-button style="display:block; width:250px; height:40px; line-height: 40px; margin:0 auto; border:none; background-color:#3a8ee6; color:#fff; font-size:16px; margin-bottom:5px"  @click="login" type="primary" align="center" class="sumbit">找回密码</el-button >
         <br/>
        &nbsp;  <span v-on:click="ToRegister" >没有账号？马上注册</span> &nbsp; &nbsp;
-       <span v-on:click="ToLogin" >已有账号？马上登录</span><br/>
-       <a href = '/' >返回首页</a>
+          <span v-on:click="ToLogin" >已有账号？马上登录</span>
+       &nbsp;&nbsp;&nbsp; <a href = '/' style="text-decoration:none;"  >返回首页</a>
+
       </div>
     </div>
   </div>
@@ -110,7 +109,7 @@
     outline: none;
     display: table;
     cursor: pointer;
-    margin: 45px auto 31px;
+    margin: 45px auto 10px;
     transition: 0.5s all;
     -webkit-transition: 0.5s all;
     -o-transition: 0.5s all;
@@ -214,8 +213,8 @@
         let that = this;
         var filter=/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/
         if(this.username ==="" || this.password === ""){
-
-          alert("请输入邮箱或密码")
+          this.word = "请输入邮箱或密码"
+          //alert("请输入邮箱或密码")
         }else if(!filter.test(this.username)){
           this.word = "邮箱格式错误，请重试"
           this.showTishi = true
@@ -245,7 +244,7 @@
             }else{
                 this.word = "密码正确"
                 this.showTishi = true
-              alert(res.data.content.userId)
+              //alert(res.data.content.userId)
                 this.$router.push({path:'/',query: {
                      user_id: res.data.content.userId ,
                      name: res.data.content.username,
